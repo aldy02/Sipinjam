@@ -6,8 +6,8 @@ const { Op } = require('sequelize');
 const transporter = require('../config/mailer');
 require('dotenv').config();
 
-// ===== REGISTER =====
-exports.register = async (req, res) => {
+// ===== SIGN UP =====
+exports.signup = async (req, res) => {
   try {
     const { nama, nok, email, jabatan, password } = req.body;
 
@@ -18,6 +18,11 @@ exports.register = async (req, res) => {
     const existing = await User.findOne({ where: { email } });
     if (existing) {
       return res.status(400).json({ message: 'Email sudah terdaftar' });
+    }
+
+    const existingNok = await User.findOne({ where: { nok } });
+    if (existingNok) {
+      return res.status(400).json({ message: 'NOK sudah terdaftar' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
