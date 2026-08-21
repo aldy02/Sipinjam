@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
-import api from '../api/axios';
+import { useAuth } from '../contexts/AuthContext';
 import gambarPupukKaltim from '../assets/gambar-pupukkaltim.jpg';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -22,12 +23,8 @@ export default function Login() {
 
     try {
       setLoading(true);
-      const res = await api.post('/auth/login', form);
-
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-
-      navigate('/dashboard');
+      await login(form.email, form.password);
+      navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Terjadi kesalahan, coba lagi');
     } finally {
