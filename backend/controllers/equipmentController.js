@@ -4,13 +4,17 @@ const { Op } = require('sequelize');
 // Get Daftar Barang (list + search + pagination)
 exports.getAllEquipment = async (req, res) => {
   try {
-    const { search = '', page = 1, limit = 9 } = req.query;
+    const { search = '', page = 1, limit = 9, status } = req.query;
 
     const offset = (page - 1) * limit;
 
-    const where = search
-      ? { nama: { [Op.like]: `%${search}%` } }
-      : {};
+    const where = {};
+    if (search) {
+      where.nama = { [Op.like]: `%${search}%` };
+    }
+    if (status) {
+      where.status = status;
+    }
 
     const { count, rows } = await Equipment.findAndCountAll({
       where,

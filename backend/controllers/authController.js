@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 const transporter = require('../config/mailer');
 require('dotenv').config();
 
-// ===== SIGN UP =====
+// Sign Up
 exports.signup = async (req, res) => {
   try {
     const { nama, nok, email, jabatan, password } = req.body;
@@ -35,7 +35,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-// ===== LOGIN =====
+// Login
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -72,13 +72,13 @@ exports.login = async (req, res) => {
   }
 };
 
-// ===== FORGOT PASSWORD =====
+// Forgot Password
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
 
-    // Selalu return sukses walau email tidak ditemukan (hindari enumeration attack)
+    // Selalu return sukses walau email tidak ditemukan (menghindari enumeration attack)
     if (!user) {
       return res.json({ message: 'Permintaan reset password telah diproses. Silakan cek email Anda.' });
     }
@@ -114,7 +114,7 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// ===== RESET PASSWORD =====
+// Reset Password
 exports.resetPassword = async (req, res) => {
   try {
     const { token } = req.params;

@@ -103,7 +103,7 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
         : 'border-gray-200 text-gray-600 hover:border-gray-300'
     }`;
 
-  // ===== VIEW: SUCCESS (setelah tambah/edit berhasil) =====
+  // Success (setelah tambah/edit berhasil)
 if (successView) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
@@ -137,7 +137,7 @@ if (successView) {
   );
 }
 
-  // ===== VIEW: DELETE CONFIRMATION =====
+  // Delete Confirmation
   if (isDelete) {
     return (
       <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
@@ -190,7 +190,7 @@ if (successView) {
     );
   }
 
-  // ===== VIEW: FORM (add / edit) =====
+  // Form (add / edit)
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
