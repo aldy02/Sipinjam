@@ -17,7 +17,7 @@ const getMenuItems = (role) => {
     { label: 'Daftar Barang', icon: <Package size={20} />, path: '/daftar-barang' },
     { label: 'Form Peminjaman Barang', icon: <FileText size={20} />, path: '/form-peminjaman', hideFor: ['admin'] },
     { label: 'Daftar Peminjaman Barang', icon: <ClipboardList size={20} />, path: '/daftar-peminjaman', hideFor: ['karyawan'] },
-    { label: 'Aktivitas Saya', icon: <UserCircle size={20} />, path: '/aktivitas-saya' },
+    { label: 'Aktivitas Saya', icon: <UserCircle size={20} />, path: '/aktivitas-saya', hideFor: ['admin'] },
     { label: 'Pengaturan', icon: <Settings size={20} />, path: '/pengaturan' },
   ];
 

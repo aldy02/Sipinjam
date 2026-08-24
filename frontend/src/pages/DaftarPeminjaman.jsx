@@ -104,9 +104,9 @@ export default function DaftarPeminjaman() {
                 filteredItems.map((item) => (
                   <tr key={item.peminjaman_id} className="border-b border-gray-50 last:border-0">
                     <td className="py-4 font-medium text-[#2B3674]">{item.kode_peminjaman}</td>
-                    <td className="py-4 text-[#2B3674]">{item.User?.nama}</td>
-                    <td className="py-4 text-[#2B3674]">{item.Equipment?.nama}</td>
-                    <td className="py-4 text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</td>
+                    <td className="py-4 font-medium text-[#2B3674]">{item.User?.nama}</td>
+                    <td className="py-4 font-medium text-[#2B3674]">{item.Equipment?.nama}</td>
+                    <td className="py-4 font-medium text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</td>
                     <td className="py-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${

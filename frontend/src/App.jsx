@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import DaftarBarang from './pages/DaftarBarang';
 import FormPeminjamanBarang from './pages/FormPeminjamanBarang';
 import DaftarPeminjaman from './pages/DaftarPeminjaman';
+import AktivitasSaya from './pages/AktivitasSaya';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           {/* Protected routes — khusus karyawan */}
           <Route element={<ProtectedRoute allowedRoles={['karyawan']} />}>
             <Route path="/form-peminjaman" element={<FormPeminjamanBarang />} />
+            <Route path="/aktivitas-saya" element={<AktivitasSaya />} />
           </Route>
 
           {/* Protected routes — khusus admin */}
