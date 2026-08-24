@@ -81,7 +81,7 @@ export default function DaftarBarang() {
             {isAdmin && (
               <button
                 onClick={() => setModal({ mode: 'add', item: null })}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#F75807] hover:bg-[#e04e05] text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#F75807] hover:bg-[#e04e05] text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
               >
                 <Plus size={18} />
                 Tambah Barang
@@ -90,77 +90,120 @@ export default function DaftarBarang() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-[#A3AED0] border-b border-gray-100">
-                <th className="pb-3 font-medium">Kode barang</th>
-                <th className="pb-3 font-medium">Nama Barang</th>
-                <th className="pb-3 font-medium">Kondisi</th>
-                <th className="pb-3 font-medium">Status</th>
-                <th className="pb-3 font-medium text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-[#A3AED0]">
-                    Memuat data...
-                  </td>
-                </tr>
-              ) : items.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-[#A3AED0]">
-                    Tidak ada barang ditemukan
-                  </td>
-                </tr>
-              ) : (
-                items.map((item) => (
-                  <tr key={item.equipment_id} className="border-b border-gray-50 last:border-0">
-                    <td className="py-4 font-medium text-[#2B3674]">{item.kode_barang}</td>
-                    <td className="py-4 font-medium text-[#2B3674]">{item.nama}</td>
-                    <td className={`py-4 font-medium capitalize ${KONDISI_STYLE[item.kondisi] || 'text-gray-500'}`}>
-                      {item.kondisi}
-                    </td>
-                    <td className="py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'}`}>
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="py-4 text-right">
-                      {isAdmin ? (
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => setModal({ mode: 'edit', item })}
-                            className="p-2 rounded-lg text-[#003399] hover:bg-blue-50 transition-colors"
-                            title="Edit"
-                          >
-                            <Pencil size={16} />
-                          </button>
-                          <button
-                            onClick={() => setModal({ mode: 'delete', item })}
-                            className="p-2 rounded-lg text-[#A30D11] hover:bg-red-50 transition-colors"
-                            title="Hapus"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => handlePinjam(item)}
-                          disabled={item.status !== 'tersedia'}
-                          className="px-4 py-2 bg-[#F75807] hover:bg-[#e04e05] disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg transition-colors"
-                        >
-                          Pinjam
-                        </button>
-                      )}
-                    </td>
+        {loading ? (
+          <div className="py-8 text-center text-[#A3AED0] text-sm">Memuat data...</div>
+        ) : items.length === 0 ? (
+          <div className="py-8 text-center text-[#A3AED0] text-sm">Tidak ada barang ditemukan</div>
+        ) : (
+          <>
+            {/* Desktop / tablet: table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-[#A3AED0] border-b border-gray-100">
+                    <th className="pb-3 font-medium">Kode barang</th>
+                    <th className="pb-3 font-medium">Nama Barang</th>
+                    <th className="pb-3 font-medium">Kondisi</th>
+                    <th className="pb-3 font-medium">Status</th>
+                    <th className="pb-3 font-medium text-right">Action</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody>
+                  {items.map((item) => (
+                    <tr key={item.equipment_id} className="border-b border-gray-50 last:border-0">
+                      <td className="py-4 font-medium text-[#2B3674]">{item.kode_barang}</td>
+                      <td className="py-4 font-medium text-[#2B3674]">{item.nama}</td>
+                      <td className={`py-4 font-medium capitalize ${KONDISI_STYLE[item.kondisi] || 'text-gray-500'}`}>
+                        {item.kondisi}
+                      </td>
+                      <td className="py-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'}`}>
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="py-4 text-right">
+                        {isAdmin ? (
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => setModal({ mode: 'edit', item })}
+                              className="p-2 rounded-lg text-[#003399] hover:bg-blue-50 transition-colors"
+                              title="Edit"
+                            >
+                              <Pencil size={16} />
+                            </button>
+                            <button
+                              onClick={() => setModal({ mode: 'delete', item })}
+                              className="p-2 rounded-lg text-[#A30D11] hover:bg-red-50 transition-colors"
+                              title="Hapus"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handlePinjam(item)}
+                            disabled={item.status !== 'tersedia'}
+                            className="px-4 py-2 bg-[#F75807] hover:bg-[#e04e05] disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg transition-colors"
+                          >
+                            Pinjam
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile: card list */}
+            <div className="md:hidden flex flex-col gap-3">
+              {items.map((item) => (
+                <div key={item.equipment_id} className="border border-gray-100 rounded-xl p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <p className="font-semibold text-[#2B3674]">{item.nama}</p>
+                      <p className="text-xs text-[#8789C0]">{item.kode_barang}</p>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize shrink-0 ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'}`}>
+                      {item.status}
+                    </span>
+                  </div>
+
+                  <p className={`text-sm font-medium capitalize mb-3 ${KONDISI_STYLE[item.kondisi] || 'text-gray-500'}`}>
+                    Kondisi: {item.kondisi}
+                  </p>
+
+                  {isAdmin ? (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setModal({ mode: 'edit', item })}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border border-gray-200 text-[#003399] text-xs font-semibold hover:bg-blue-50 transition-colors"
+                      >
+                        <Pencil size={14} />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => setModal({ mode: 'delete', item })}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border border-gray-200 text-[#A30D11] text-xs font-semibold hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        Hapus
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handlePinjam(item)}
+                      disabled={item.status !== 'tersedia'}
+                      className="w-full py-2.5 bg-[#F75807] hover:bg-[#e04e05] disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+                    >
+                      Pinjam
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2 mt-6 text-sm">
@@ -175,9 +218,8 @@ export default function DaftarBarang() {
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`w-8 h-8 rounded-lg font-medium ${
-                  p === page ? 'bg-[#003399] text-white' : 'text-gray-500 hover:bg-gray-50'
-                }`}
+                className={`w-8 h-8 rounded-lg font-medium ${p === page ? 'bg-[#003399] text-white' : 'text-gray-500 hover:bg-gray-50'
+                  }`}
               >
                 {p}
               </button>

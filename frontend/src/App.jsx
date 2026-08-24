@@ -9,6 +9,7 @@ import DaftarBarang from './pages/DaftarBarang';
 import FormPeminjamanBarang from './pages/FormPeminjamanBarang';
 import DaftarPeminjaman from './pages/DaftarPeminjaman';
 import AktivitasSaya from './pages/AktivitasSaya';
+import Pengaturan from './pages/Pengaturan';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/daftar-barang" element={<DaftarBarang />} />
+            <Route path="/pengaturan" element={<Pengaturan />} />
           </Route>
 
           {/* Protected routes — khusus karyawan */}
