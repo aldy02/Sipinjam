@@ -181,7 +181,7 @@ const handleCloseModal = () => {
                             </div>
                             <div>
                                 <h3 className="font-bold text-[#2B3674]">Detail Peminjaman</h3>
-                                <p className="text-sm text-[#8789C0]">Informasi lokasi, kondisi dan jadwal peminjaman</p>
+                                <p className="text-sm text-[#8789C0]">Informasi lokasi dan jadwal pengembalian</p>
                             </div>
                         </div>
 

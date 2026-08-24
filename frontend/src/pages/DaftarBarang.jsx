@@ -74,7 +74,7 @@ export default function DaftarBarang() {
                   setSearch(e.target.value);
                 }}
                 placeholder="Cari berdasarkan nama barang..."
-                className="w-full pl-10 pr-4 py-2.5 placeholder-[#8789C0] text-[#38437C] border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399]"
+                className="w-full pl-10 pr-4 py-2.5 placeholder-[#8789C0] text-[#2B3674] border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399]"
               />
             </div>
 
