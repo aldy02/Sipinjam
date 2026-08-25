@@ -75,61 +75,107 @@ export default function DaftarPeminjaman() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-[#A3AED0] border-b border-gray-100">
-                <th className="pb-3 font-medium">Kode Peminjaman</th>
-                <th className="pb-3 font-medium">Peminjam</th>
-                <th className="pb-3 font-medium">Barang</th>
-                <th className="pb-3 font-medium">Tanggal Pinjam</th>
-                <th className="pb-3 font-medium">Status</th>
-                <th className="pb-3 font-medium text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-[#A3AED0]">
-                    Memuat data...
-                  </td>
-                </tr>
-              ) : filteredItems.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-[#A3AED0]">
-                    Tidak ada data peminjaman ditemukan
-                  </td>
-                </tr>
-              ) : (
-                filteredItems.map((item) => (
-                  <tr key={item.peminjaman_id} className="border-b border-gray-50 last:border-0">
-                    <td className="py-4 font-medium text-[#2B3674]">{item.kode_peminjaman}</td>
-                    <td className="py-4 font-medium text-[#2B3674]">{item.User?.nama}</td>
-                    <td className="py-4 font-medium text-[#2B3674]">{item.Equipment?.nama}</td>
-                    <td className="py-4 font-medium text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</td>
-                    <td className="py-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                          STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="py-4 text-right">
-                      <button
-                        onClick={() => setSelectedItem(item)}
-                        className="px-4 py-2 bg-[#F75807] hover:bg-[#e04e05] text-white text-xs font-semibold rounded-lg transition-colors"
-                      >
-                        Detail
-                      </button>
-                    </td>
+        {loading ? (
+          <div className="py-8 text-center text-[#A3AED0] text-sm">Memuat data...</div>
+        ) : filteredItems.length === 0 ? (
+          <div className="py-8 text-center text-[#A3AED0] text-sm">Tidak ada data peminjaman ditemukan</div>
+        ) : (
+          <>
+            {/* Desktop / tablet: table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-[#A3AED0] border-b border-gray-100">
+                    <th className="pb-3 font-medium">Kode Peminjaman</th>
+                    <th className="pb-3 font-medium">Peminjam</th>
+                    <th className="pb-3 font-medium">Barang</th>
+                    <th className="pb-3 font-medium">Tanggal Pinjam</th>
+                    <th className="pb-3 font-medium">Status</th>
+                    <th className="pb-3 font-medium text-right">Action</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody>
+                  {filteredItems.map((item) => (
+                    <tr key={item.peminjaman_id} className="border-b border-gray-50 last:border-0">
+                      <td className="py-4 font-medium text-[#2B3674]">{item.kode_peminjaman}</td>
+                      <td className="py-4 font-medium text-[#2B3674]">{item.User?.nama}</td>
+                      <td className="py-4 font-medium text-[#2B3674]">{item.Equipment?.nama}</td>
+                      <td className="py-4 font-medium text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</td>
+                      <td className="py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                            STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="py-4 text-right">
+                        <button
+                          onClick={() => setSelectedItem(item)}
+                          className="px-4 py-2 bg-[#F75807] hover:bg-[#e04e05] text-white text-xs font-semibold rounded-lg transition-colors"
+                        >
+                          Detail
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile: card list */}
+            <div className="md:hidden flex flex-col gap-4">
+              {filteredItems.map((item) => (
+                <div
+                  key={item.peminjaman_id}
+                  className="border border-gray-100 rounded-2xl p-5 shadow-sm"
+                >
+                  {/* Header: kode peminjaman + status badge */}
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                      <p className="font-bold text-[#2B3674] text-base leading-tight">
+                        {item.kode_peminjaman}
+                      </p>
+                      <p className="text-xs text-[#8789C0] mt-0.5">{item.Equipment?.kode_barang}</p>
+                    </div>
+                    <span
+                      className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold capitalize ${
+                        STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
+                      }`}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
+
+                  {/* Detail rows */}
+                  <div className="flex flex-col gap-2.5 mb-5">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-[#8789C0]">Peminjam</span>
+                      <span className="font-semibold text-[#2B3674]">{item.User?.nama || '-'}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-[#8789C0]">Barang</span>
+                      <span className="font-semibold text-[#2B3674]">{item.Equipment?.nama || '-'}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-[#8789C0]">Tanggal Pinjam</span>
+                      <span className="font-semibold text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</span>
+                    </div>
+                  </div>
+
+                  {/* Action */}
+                  <button
+                    onClick={() => setSelectedItem(item)}
+                    className="w-full py-2.5 bg-[#F75807] hover:bg-[#e04e05] text-white text-sm font-semibold rounded-lg transition-colors"
+                  >
+                    Detail
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2 mt-6 text-sm">
