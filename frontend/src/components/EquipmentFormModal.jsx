@@ -99,8 +99,8 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
   const kondisiButtonClass = (isActive) =>
     `px-4 py-3.5 rounded-xl text-sm font-medium text-left border transition-colors ${
       isActive
-        ? 'border-[#003399] bg-blue-50 text-[#003399]'
-        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+        ? 'border-[#003399] bg-[#E8EDFB]/70 text-[#2B3674]'
+        : 'border-slate-200 text-[#8789C0] hover:bg-slate-50'
     }`;
 
   // Success (setelah tambah/edit berhasil)
@@ -286,7 +286,7 @@ if (successView) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-[#003399] hover:bg-[#002a80] disabled:bg-gray-400 text-white text-sm font-semibold rounded-lg transition-colors"
+            className="w-full py-3 bg-[#F75807] hover:bg-[#e04e05] disabled:bg-gray-400 text-white text-sm font-semibold rounded-lg transition-colors"
           >
             {loading ? 'Menyimpan...' : isEdit ? 'Simpan Perubahan' : 'Tambah Barang'}
           </button>
