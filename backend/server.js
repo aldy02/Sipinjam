@@ -7,6 +7,7 @@ const { sequelize } = require('./models');
 const authRoutes = require('./routes/authRoutes');
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const peminjamanRoutes = require('./routes/peminjamanRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/equipment', equipmentRoutes);
 app.use('/api/peminjaman', peminjamanRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 const PORT = process.env.PORT || 5000;
 
