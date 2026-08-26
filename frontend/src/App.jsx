@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -11,35 +12,45 @@ import DaftarPeminjaman from './pages/DaftarPeminjaman';
 import AktivitasSaya from './pages/AktivitasSaya';
 import Pengaturan from './pages/Pengaturan';
 
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        {/* Protected routes — wajib login, semua role */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/daftar-barang" element={<DaftarBarang />} />
+          <Route path="/pengaturan" element={<Pengaturan />} />
+        </Route>
+
+        {/* Protected routes — khusus karyawan */}
+        <Route element={<ProtectedRoute allowedRoles={['karyawan']} />}>
+          <Route path="/form-peminjaman" element={<FormPeminjamanBarang />} />
+          <Route path="/aktivitas-saya" element={<AktivitasSaya />} />
+        </Route>
+
+        {/* Protected routes — khusus admin */}
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="/daftar-peminjaman" element={<DaftarPeminjaman />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-
-          {/* Protected routes — wajib login, semua role */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/daftar-barang" element={<DaftarBarang />} />
-            <Route path="/pengaturan" element={<Pengaturan />} />
-          </Route>
-
-          {/* Protected routes — khusus karyawan */}
-          <Route element={<ProtectedRoute allowedRoles={['karyawan']} />}>
-            <Route path="/form-peminjaman" element={<FormPeminjamanBarang />} />
-            <Route path="/aktivitas-saya" element={<AktivitasSaya />} />
-          </Route>
-
-          {/* Protected routes — khusus admin */}
-          <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-            <Route path="/daftar-peminjaman" element={<DaftarPeminjaman />} />
-          </Route>
-
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <AnimatedRoutes />
       </AuthProvider>
     </BrowserRouter>
   );

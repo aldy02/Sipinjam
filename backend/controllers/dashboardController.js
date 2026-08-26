@@ -9,6 +9,9 @@ exports.getDashboard = async (req, res) => {
     const userId = req.user.user_id;
     const now = new Date();
 
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
     // Filter: karyawan hanya lihat datanya sendiri, admin lihat semua
     const peminjamanWhere = isAdmin ? {} : { user_id: userId };
 
@@ -23,7 +26,7 @@ exports.getDashboard = async (req, res) => {
       where: {
         ...peminjamanWhere,
         status: 'dipinjam',
-        tanggal_rencana_kembali: { [Op.lt]: now },
+        tanggal_rencana_kembali: { [Op.lt]: startOfToday },
       },
     });
 
@@ -43,7 +46,14 @@ exports.getDashboard = async (req, res) => {
 
     dikembalikanList.forEach((p) => {
       if (p.tanggal_rencana_kembali && p.tanggal_aktual_kembali) {
-        if (new Date(p.tanggal_aktual_kembali) <= new Date(p.tanggal_rencana_kembali)) {
+        const aktual = new Date(p.tanggal_aktual_kembali);
+        const rencana = new Date(p.tanggal_rencana_kembali);
+
+        // Normalisasi ke tanggal saja
+        aktual.setHours(0, 0, 0, 0);
+        rencana.setHours(0, 0, 0, 0);
+
+        if (aktual <= rencana) {
           tepatWaktuCount += 1;
         }
       }
@@ -94,32 +104,40 @@ exports.getDashboard = async (req, res) => {
     });
 
     // Trend Peminjaman Bulanan
-    const currentYear = now.getFullYear();
+    const twelveMonthsAgoStart = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
     const trenRaw = await Peminjaman.findAll({
       where: {
         ...peminjamanWhere,
         tanggal_pinjam: {
-          [Op.gte]: new Date(`${currentYear}-01-01`),
-          [Op.lt]: new Date(`${currentYear + 1}-01-01`),
+          [Op.gte]: twelveMonthsAgoStart,
+          [Op.lt]: nextMonthStart,
         },
       },
       attributes: [
-        [fn('MONTH', col('tanggal_pinjam')), 'bulan'],
+        [fn('DATE_FORMAT', col('tanggal_pinjam'), '%Y-%m'), 'periode'],
         [fn('COUNT', col('peminjaman_id')), 'jumlah'],
       ],
-      group: [fn('MONTH', col('tanggal_pinjam'))],
+      group: [fn('DATE_FORMAT', col('tanggal_pinjam'), '%Y-%m')],
       raw: true,
     });
 
     const trenMap = {};
     trenRaw.forEach((row) => {
-      trenMap[row.bulan] = parseInt(row.jumlah, 10);
+      trenMap[row.periode] = parseInt(row.jumlah, 10);
     });
 
-    const trenPeminjamanBulanan = MONTH_LABELS.map((label, index) => ({
-      bulan: label,
-      jumlah: trenMap[index + 1] || 0,
-    }));
+    const trenPeminjamanBulanan = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const periode = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      trenPeminjamanBulanan.push({
+        bulan: MONTH_LABELS[d.getMonth()],
+        tahun: d.getFullYear(),
+        jumlah: trenMap[periode] || 0,
+      });
+    }
 
     // Kondisi Barang
     const totalEquipment = await Equipment.count();

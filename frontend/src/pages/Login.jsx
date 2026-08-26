@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import gambarPupukKaltim from '../assets/gambar-pupukkaltim.jpg';
 
@@ -33,12 +34,18 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen w-full font-sans">
+    <div className="flex min-h-screen w-full font-sans overflow-hidden">
       {/* Sisi form */}
-      <div className="flex-1 flex items-center justify-center p-8 md:p-12 bg-white">
+      <motion.div
+        initial={{ x: -60, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: -60, opacity: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="flex-1 flex items-center justify-center p-8 md:p-12 bg-white"
+      >
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold text-[#003399] mb-2">Login!</h1>
-          <p className="text-sm text-gray-500 mb-7 leading-relaxed">
+          <p className="text-sm text-[#8789C0] mb-7 leading-relaxed">
             Selamat datang di SIPINJAM, Sistem Peminjaman Peralatan PT Pupuk
             Kalimantan Timur – Unit Kerja PPE.
           </p>
@@ -61,7 +68,7 @@ export default function Login() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full px-3.5 py-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                className="w-full placeholder-[#8789C0] px-3.5 py-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
               />
             </div>
 
@@ -77,7 +84,7 @@ export default function Login() {
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-3 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                  className="w-full px-3.5 py-3 placeholder-[#8789C0] pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
                 />
                 <span
                   onClick={() => setShowPassword(!showPassword)}
@@ -104,17 +111,21 @@ export default function Login() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-5">
+          <p className="text-center text-sm text-[#8789C0] mt-5">
             Belum punya akun?{' '}
             <Link to="/signup" className="text-[#003399] font-semibold underline">
               Sign Up
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Sisi gambar */}
-      <div
+      <motion.div
+        initial={{ x: 60, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: 60, opacity: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
         className="hidden md:block flex-1 bg-cover bg-center"
         style={{ backgroundImage: `url(${gambarPupukKaltim})` }}
       />

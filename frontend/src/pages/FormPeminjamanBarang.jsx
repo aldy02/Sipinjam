@@ -85,7 +85,7 @@ export default function FormPeminjamanBarang() {
                     <>
                         Pengajuan peminjaman{' '}
                         {kode && <span className="font-semibold text-[#5B69B9]">{kode}</span>}{' '}
-                        berhasil dikirim dan sedang menunggu proses.
+                        berhasil dikirim.
                     </>
                 ),
             });
