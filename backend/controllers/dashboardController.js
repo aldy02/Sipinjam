@@ -3,14 +3,33 @@ const { Op, fn, col, literal } = require('sequelize');
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
+const WITA_OFFSET_MS = 8 * 60 * 60 * 1000;
+
+// Set Timezone
+function nowInWITA() {
+  return new Date(Date.now() + WITA_OFFSET_MS);
+}
+
+function startOfTodayWITA() {
+  const wita = nowInWITA();
+  const y = wita.getUTCFullYear();
+  const m = wita.getUTCMonth();
+  const d = wita.getUTCDate();
+  return new Date(Date.UTC(y, m, d, 0, 0, 0) - WITA_OFFSET_MS);
+}
+
+function toWITADateOnly(date) {
+  const shifted = new Date(date.getTime() + WITA_OFFSET_MS);
+  return new Date(Date.UTC(shifted.getUTCFullYear(), shifted.getUTCMonth(), shifted.getUTCDate()));
+}
+
 exports.getDashboard = async (req, res) => {
   try {
     const isAdmin = req.user.role === 'admin';
     const userId = req.user.user_id;
-    const now = new Date();
+    const now = nowInWITA(); // Hitung 12 bulan tren dalam wita
 
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
+    const startOfToday = startOfTodayWITA();
 
     // Filter: karyawan hanya lihat datanya sendiri, admin lihat semua
     const peminjamanWhere = isAdmin ? {} : { user_id: userId };
@@ -46,12 +65,9 @@ exports.getDashboard = async (req, res) => {
 
     dikembalikanList.forEach((p) => {
       if (p.tanggal_rencana_kembali && p.tanggal_aktual_kembali) {
-        const aktual = new Date(p.tanggal_aktual_kembali);
-        const rencana = new Date(p.tanggal_rencana_kembali);
-
-        // Normalisasi ke tanggal saja
-        aktual.setHours(0, 0, 0, 0);
-        rencana.setHours(0, 0, 0, 0);
+        // Normalisasi ke tanggal WITA
+        const aktual = toWITADateOnly(new Date(p.tanggal_aktual_kembali));
+        const rencana = toWITADateOnly(new Date(p.tanggal_rencana_kembali));
 
         if (aktual <= rencana) {
           tepatWaktuCount += 1;
@@ -104,8 +120,8 @@ exports.getDashboard = async (req, res) => {
     });
 
     // Trend Peminjaman Bulanan
-    const twelveMonthsAgoStart = new Date(now.getFullYear(), now.getMonth() - 11, 1);
-    const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const twelveMonthsAgoStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 11, 1) - WITA_OFFSET_MS);
+    const nextMonthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1) - WITA_OFFSET_MS);
 
     const trenRaw = await Peminjaman.findAll({
       where: {
@@ -130,11 +146,11 @@ exports.getDashboard = async (req, res) => {
 
     const trenPeminjamanBulanan = [];
     for (let i = 11; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const periode = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
+      const periode = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
       trenPeminjamanBulanan.push({
-        bulan: MONTH_LABELS[d.getMonth()],
-        tahun: d.getFullYear(),
+        bulan: MONTH_LABELS[d.getUTCMonth()],
+        tahun: d.getUTCFullYear(),
         jumlah: trenMap[periode] || 0,
       });
     }
