@@ -29,10 +29,10 @@ export default function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
+const handleLogout = async () => {
+  await logout();
+  navigate('/login', { replace: true });
+};
 
   const initials = user?.nama
     ? user.nama.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()

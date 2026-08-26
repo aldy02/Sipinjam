@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api/axios';
+import { loginApi, logoutApi, getMe } from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -8,27 +8,34 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token');
-
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    // When app open for the first time, ask backend: "cookie ini punya siapa?"
+    const checkAuth = async () => {
+      try {
+        const res = await getMe();
+        setUser(res.data.data);
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
   }, []);
 
   const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify(res.data.user));
+    const res = await loginApi({ email, password });
     setUser(res.data.user);
     return res.data.user;
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
+  const logout = async () => {
+    try {
+      await logoutApi();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUser(null);
+    }
   };
 
   return (

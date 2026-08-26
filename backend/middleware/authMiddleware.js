@@ -2,8 +2,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = req.cookies?.token;
 
   if (!token) {
     return res.status(401).json({ message: 'Token tidak ditemukan' });
@@ -13,7 +12,7 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({ message: 'Token tidak valid atau kadaluarsa' });
     }
-    req.user = decoded; // { user_id, role }
+    req.user = decoded;
     next();
   });
 };

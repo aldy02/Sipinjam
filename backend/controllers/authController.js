@@ -56,13 +56,22 @@ exports.login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
+    // Set token sebagai httpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     res.json({
       message: 'Login berhasil',
-      token,
       user: {
         user_id: user.user_id,
         nama: user.nama,
+        nok: user.nok,
         email: user.email,
+        jabatan: user.jabatan,
         role: user.role,
       },
     });
@@ -70,6 +79,16 @@ exports.login = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: 'Terjadi kesalahan server' });
   }
+};
+
+// Logout
+exports.logout = async (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  });
+  res.json({ message: 'Logout berhasil' });
 };
 
 // Forgot Password
@@ -253,6 +272,24 @@ exports.changePassword = async (req, res) => {
     await user.update({ password: hashedPassword });
 
     res.json({ message: 'Kata sandi berhasil diubah' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Terjadi kesalahan server' });
+  }
+};
+
+// Check Login Status When App Open For The First Time
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.user_id, {
+      attributes: ['user_id', 'nama', 'nok', 'email', 'jabatan', 'role'],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User tidak ditemukan' });
+    }
+
+    res.json({ data: user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Terjadi kesalahan server' });

@@ -82,7 +82,6 @@ export default function Pengaturan() {
       const res = await updateProfile(profileForm);
       const updatedUser = { ...user, ...res.data.data };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
       setOriginalProfile({ ...profileForm });
       setStatusModal({ type: 'success', message: 'Informasi profil berhasil diperbarui.' });
     } catch (err) {
