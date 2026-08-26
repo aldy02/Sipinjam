@@ -244,7 +244,7 @@ export default function Pengaturan() {
                   value={passwordForm.password_lama}
                   onChange={handlePasswordChange}
                   placeholder="Masukkan kata sandi saat ini"
-                  className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] text-[#2B3674] placeholder-[#38437C]"
+                  className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] text-[#2B3674] placeholder-[#8789C0]"
                 />
                 <span
                   onClick={() => setShowPasswordLama(!showPasswordLama)}
@@ -267,7 +267,7 @@ export default function Pengaturan() {
                     value={passwordForm.password_baru}
                     onChange={handlePasswordChange}
                     placeholder="Masukkan kata sandi baru"
-                    className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] text-[#2B3674] placeholder-[#38437C]"
+                    className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] text-[#2B3674] placeholder-[#8789C0]"
                   />
                   <span
                     onClick={() => setShowPasswordBaru(!showPasswordBaru)}
@@ -289,7 +289,7 @@ export default function Pengaturan() {
                     value={passwordForm.konfirmasi_password_baru}
                     onChange={handlePasswordChange}
                     placeholder="Masukkan konfirmasi kata sandi baru"
-                    className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] text-[#2B3674] placeholder-[#38437C]"
+                    className="w-full px-3.5 py-2.5 pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] text-[#2B3674] placeholder-[#8789C0]"
                   />
                   <span
                     onClick={() => setShowKonfirmasiPassword(!showKonfirmasiPassword)}
