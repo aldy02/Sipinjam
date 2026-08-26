@@ -144,3 +144,117 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Terjadi kesalahan server' });
   }
 };
+
+// Get Profile
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.user_id, {
+      attributes: ['user_id', 'nama', 'nok', 'email', 'jabatan', 'role'],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User tidak ditemukan' });
+    }
+
+    res.json({ data: user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Terjadi kesalahan server' });
+  }
+};
+
+// Update Profile
+exports.updateProfile = async (req, res) => {
+  try {
+    const { nama, nok, email, jabatan } = req.body;
+
+    if (!nama || !nok || !email) {
+      return res.status(400).json({ message: 'Nama, NOK, dan email wajib diisi' });
+    }
+
+    const user = await User.findByPk(req.user.user_id);
+    if (!user) {
+      return res.status(404).json({ message: 'User tidak ditemukan' });
+    }
+
+    // Check email saat diganti tidak bentrok dengan user lain
+    if (email !== user.email) {
+      const existingEmail = await User.findOne({ where: { email } });
+      if (existingEmail) {
+        return res.status(400).json({ message: 'Email sudah digunakan oleh akun lain' });
+      }
+    }
+
+    // Check NOK saat diganti tidak bentrok dengan user lain
+    if (nok !== user.nok) {
+      const existingNok = await User.findOne({ where: { nok } });
+      if (existingNok) {
+        return res.status(400).json({ message: 'NOK sudah digunakan oleh akun lain' });
+      }
+    }
+
+    await user.update({
+      nama,
+      nok,
+      email,
+      jabatan: jabatan ?? user.jabatan,
+    });
+
+    res.json({
+      message: 'Profil berhasil diperbarui',
+      data: {
+        user_id: user.user_id,
+        nama: user.nama,
+        nok: user.nok,
+        email: user.email,
+        jabatan: user.jabatan,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Terjadi kesalahan server' });
+  }
+};
+
+// Change Password
+exports.changePassword = async (req, res) => {
+  try {
+    const { password_lama, password_baru, konfirmasi_password_baru } = req.body;
+
+    if (!password_lama || !password_baru || !konfirmasi_password_baru) {
+      return res.status(400).json({ message: 'Semua field password wajib diisi' });
+    }
+
+    if (password_baru.length < 6) {
+      return res.status(400).json({ message: 'Password baru minimal 6 karakter' });
+    }
+
+    if (password_baru !== konfirmasi_password_baru) {
+      return res.status(400).json({ message: 'Konfirmasi password baru tidak sama' });
+    }
+
+    const user = await User.findByPk(req.user.user_id);
+    if (!user) {
+      return res.status(404).json({ message: 'User tidak ditemukan' });
+    }
+
+    const isMatch = await bcrypt.compare(password_lama, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Kata sandi saat ini salah' });
+    }
+
+    const isSameAsOld = await bcrypt.compare(password_baru, user.password);
+    if (isSameAsOld) {
+      return res.status(400).json({ message: 'Password baru tidak boleh sama dengan password lama' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password_baru, 10);
+    await user.update({ password: hashedPassword });
+
+    res.json({ message: 'Kata sandi berhasil diubah' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Terjadi kesalahan server' });
+  }
+};
