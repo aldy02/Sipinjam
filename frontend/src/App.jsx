@@ -11,6 +11,7 @@ import FormPeminjamanBarang from './pages/FormPeminjamanBarang';
 import DaftarPeminjaman from './pages/DaftarPeminjaman';
 import AktivitasSaya from './pages/AktivitasSaya';
 import Pengaturan from './pages/Pengaturan';
+import UnderConstruction from './pages/UnderConstruction';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -21,6 +22,7 @@ function AnimatedRoutes() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<UnderConstruction />} />
 
         {/* Protected routes — wajib login, semua role */}
         <Route element={<ProtectedRoute />}>
