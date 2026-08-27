@@ -89,7 +89,7 @@ export default function Signup() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
                 Email
               </label>
               <input
@@ -99,12 +99,12 @@ export default function Signup() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full px-3.5 py-2.5 border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                className="w-full px-3.5 py-2.5 text-[#2B3674] border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
                 NOK
               </label>
               <input
@@ -114,12 +114,12 @@ export default function Signup() {
                 value={form.nok}
                 onChange={handleChange}
                 required
-                className="w-full px-3.5 py-2.5 border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                className="w-full px-3.5 py-2.5 text-[#2B3674] border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
                 Nama
               </label>
               <input
@@ -129,12 +129,12 @@ export default function Signup() {
                 value={form.nama}
                 onChange={handleChange}
                 required
-                className="w-full px-3.5 py-2.5 placeholder-[#8789C0] border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                className="w-full px-3.5 text-[#2B3674] py-2.5 placeholder-[#8789C0] border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
                 Jabatan
               </label>
               <input
@@ -143,12 +143,13 @@ export default function Signup() {
                 placeholder="Masukkan jabatan"
                 value={form.jabatan}
                 onChange={handleChange}
-                className="w-full px-3.5 py-2.5 border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                required
+                className="w-full px-3.5 py-2.5 text-[#2B3674] border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -159,7 +160,7 @@ export default function Signup() {
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 placeholder-[#8789C0] pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                  className="w-full text-[#2B3674] px-3.5 py-2.5 placeholder-[#8789C0] pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
                 />
                 <span
                   onClick={() => setShowPassword(!showPassword)}
@@ -171,7 +172,7 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
                 Konfirmasi Password
               </label>
               <div className="relative">
@@ -182,7 +183,7 @@ export default function Signup() {
                   value={form.konfirmasiPassword}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 pr-10 border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                  className="w-full text-[#2B3674] px-3.5 py-2.5 pr-10 border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
                 />
                 <span
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}

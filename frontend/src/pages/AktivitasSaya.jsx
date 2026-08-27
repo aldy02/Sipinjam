@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Package } from 'lucide-react';
+import { Package, ChevronDown, ChevronUp } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import PageHeader from '../components/PageHeader';
 import KembalikanBarangModal from '../components/KembalikanBarangModal';
 import DetailPeminjamanModal from '../components/DetailPeminjamanModal';
 import { getPeminjamanList } from '../api/peminjaman';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const STATUS_STYLE = {
     dipinjam: 'bg-orange-50 text-[#CD6200]',
@@ -70,7 +69,7 @@ export default function AktivitasSaya() {
 
             {/* Section: Barang yang sedang dipinjam */}
             <div className="mb-6">
-                <h2 className="text-lg font-bold text-[#2B3674] mb-4">Riwayat Peminjaman Barang</h2>
+                <h2 className="text-lg font-bold text-[#2B3674] mb-4">Barang Belum Dikembalikan</h2>
 
                 {loading ? (
                     <div className="bg-white rounded-2xl p-8 text-center text-[#A3AED0] shadow-sm">
@@ -119,62 +118,98 @@ export default function AktivitasSaya() {
                 )}
             </div>
 
+            {/* Divider */}
+            <div className="md:hidden border-t border-gray-200 my-8" />
+
             {/* Section: Riwayat Peminjaman Saya */}
             <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">
                 <h2 className="text-lg font-bold text-[#2B3674] mb-5">Riwayat Peminjaman Saya</h2>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="text-left text-[#A3AED0] border-b border-gray-100">
-                                <th className="pb-3 font-medium">Kode Peminjaman</th>
-                                <th className="pb-3 font-medium">Barang</th>
-                                <th className="pb-3 font-medium">Tanggal Pinjam</th>
-                                <th className="pb-3 font-medium">Status</th>
-                                <th className="pb-3 font-medium text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={5} className="py-8 text-center text-[#A3AED0]">
-                                        Memuat data...
-                                    </td>
-                                </tr>
-                            ) : historyItems.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="py-8 text-center text-[#A3AED0]">
-                                        Belum ada riwayat peminjaman
-                                    </td>
-                                </tr>
-                            ) : (
-                                historyItems.map((item) => (
-                                    <tr key={item.peminjaman_id} className="border-b border-gray-50 last:border-0">
-                                        <td className="py-4 font-medium text-[#2B3674]">{item.kode_peminjaman}</td>
-                                        <td className="py-4 font-medium text-[#2B3674]">{item.Equipment?.nama}</td>
-                                        <td className="py-4 font-medium text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</td>
-                                        <td className="py-4">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
-                                                    }`}
-                                            >
-                                                {item.status}
-                                            </span>
-                                        </td>
-                                        <td className="py-4 text-right">
-                                            <button
-                                                onClick={() => setDetailItem(item)}
-                                                className="px-4 py-2 bg-[#F75807] hover:bg-[#e04e05] text-white text-xs font-semibold rounded-lg transition-colors"
-                                            >
-                                                Detail
-                                            </button>
-                                        </td>
+                {loading ? (
+                    <div className="py-8 text-center text-[#A3AED0] text-sm">Memuat data...</div>
+                ) : historyItems.length === 0 ? (
+                    <div className="py-8 text-center text-[#A3AED0] text-sm">Belum ada riwayat peminjaman</div>
+                ) : (
+                    <>
+                        {/* Desktop / tablet: table */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead>
+                                    <tr className="text-left text-[#A3AED0] border-b border-gray-100">
+                                        <th className="pb-3 font-medium">Kode Peminjaman</th>
+                                        <th className="pb-3 font-medium">Barang</th>
+                                        <th className="pb-3 font-medium">Tanggal Pinjam</th>
+                                        <th className="pb-3 font-medium">Status</th>
+                                        <th className="pb-3 font-medium text-right">Action</th>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                </thead>
+                                <tbody>
+                                    {historyItems.map((item) => (
+                                        <tr key={item.peminjaman_id} className="border-b border-gray-50 last:border-0">
+                                            <td className="py-4 font-medium text-[#2B3674]">{item.kode_peminjaman}</td>
+                                            <td className="py-4 font-medium text-[#2B3674]">{item.Equipment?.nama}</td>
+                                            <td className="py-4 font-medium text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</td>
+                                            <td className="py-4">
+                                                <span
+                                                    className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
+                                                        }`}
+                                                >
+                                                    {item.status}
+                                                </span>
+                                            </td>
+                                            <td className="py-4 text-right">
+                                                <button
+                                                    onClick={() => setDetailItem(item)}
+                                                    className="px-4 py-2 bg-[#F75807] hover:bg-[#e04e05] text-white text-xs font-semibold rounded-lg transition-colors"
+                                                >
+                                                    Detail
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile: card list */}
+                        <div className="md:hidden flex flex-col gap-4">
+                            {historyItems.map((item) => (
+                                <div key={item.peminjaman_id} className="border border-gray-100 rounded-2xl p-5">
+                                    <div className="flex items-start justify-between mb-1">
+                                        <p className="font-bold text-[#2B3674]">{item.kode_peminjaman}</p>
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-medium capitalize shrink-0 ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
+                                                }`}
+                                        >
+                                            {item.status}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-[#8789C0] mb-4">{item.Equipment?.kode_barang}</p>
+
+                                    <div className="space-y-2.5 mb-4">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm text-[#5B69B9]">Barang</span>
+                                            <span className="text-sm font-semibold text-[#2B3674]">{item.Equipment?.nama}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm text-[#5B69B9]">Tanggal Pinjam</span>
+                                            <span className="text-sm font-semibold text-[#2B3674]">
+                                                {formatTanggal(item.tanggal_pinjam)}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={() => setDetailItem(item)}
+                                        className="w-full py-3 bg-[#F75807] hover:bg-[#e04e05] text-white text-sm font-semibold rounded-xl transition-colors"
+                                    >
+                                        Detail
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
 
                 {!loading && items.length > HISTORY_PREVIEW_COUNT && (
                     <div className="flex justify-center mt-6">

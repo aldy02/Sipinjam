@@ -58,7 +58,7 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
                 Email
               </label>
               <input
@@ -68,12 +68,12 @@ export default function Login() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full placeholder-[#8789C0] px-3.5 py-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                className="w-full text-[#2B3674] placeholder-[#8789C0] px-3.5 py-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -84,7 +84,7 @@ export default function Login() {
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-3 placeholder-[#8789C0] pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
+                  className="w-full px-3.5 py-3 text-[#2B3674] placeholder-[#8789C0] pr-10 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
                 />
                 <span
                   onClick={() => setShowPassword(!showPassword)}

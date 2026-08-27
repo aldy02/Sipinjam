@@ -120,19 +120,19 @@ export default function Dashboard() {
 
       {/* Notifikasi */}
       {notifikasi && (
-        <div className="bg-red-50 rounded-2xl p-5 mb-6 flex items-start justify-between gap-4">
+        <div className="bg-red-50 border-red-300 border rounded-2xl p-5 mb-6 flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle size={20} className="text-red-500 shrink-0 mt-0.5" />
+            <AlertTriangle size={20} className="text-red-700 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-red-600">{notifikasi.pesan}</p>
-              <p className="text-sm text-red-500">
+              <p className="font-semibold text-red-700">{notifikasi.pesan}</p>
+              <p className="text-sm text-red-600">
                 Segera kembalikan barang untuk menghindari keterlambatan lebih lama.
               </p>
             </div>
           </div>
           <button
             onClick={() => navigate(riwayatPath)}
-            className="flex items-center gap-1 text-sm font-semibold text-red-600 shrink-0 hover:underline"
+            className="flex items-center gap-1 text-sm font-semibold text-red-700 shrink-0 hover:underline"
           >
             Lihat <ArrowRight size={16} />
           </button>

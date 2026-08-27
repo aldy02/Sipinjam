@@ -136,7 +136,7 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
           </div>
 
           {keterlambatan > 0 && (
-            <div className="flex items-start gap-2 bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg mb-5">
+            <div className="flex border-red-300 border items-start gap-2 bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg mb-5">
               <AlertTriangle size={18} className="shrink-0 mt-0.5" />
               <p>
                 Pengembalian terlambat <strong>{keterlambatan} hari</strong> dari rencana kembali (
