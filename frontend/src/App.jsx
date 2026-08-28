@@ -12,6 +12,7 @@ import DaftarPeminjaman from './pages/DaftarPeminjaman';
 import AktivitasSaya from './pages/AktivitasSaya';
 import Pengaturan from './pages/Pengaturan';
 import UnderConstruction from './pages/UnderConstruction';
+import KelolaAkun from './pages/KelolaAkun';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -40,6 +41,7 @@ function AnimatedRoutes() {
         {/* Protected routes — khusus admin */}
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
           <Route path="/daftar-peminjaman" element={<DaftarPeminjaman />} />
+            <Route path="/kelola-akun" element={<KelolaAkun />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
