@@ -103,9 +103,8 @@ export default function DaftarPeminjaman() {
                       <td className="py-4 font-medium text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</td>
                       <td className="py-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                            STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
-                          }`}
+                          className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
+                            }`}
                         >
                           {item.status}
                         </span>
@@ -137,12 +136,11 @@ export default function DaftarPeminjaman() {
                       <p className="font-bold text-[#2B3674] text-base leading-tight">
                         {item.kode_peminjaman}
                       </p>
-                      <p className="text-xs text-[#8789C0] mt-0.5">{item.Equipment?.kode_barang}</p>
+                      <p className="text-xs font-medium text-[#5B69B9] mt-0.5">{item.Equipment?.kode_barang}</p>
                     </div>
                     <span
-                      className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold capitalize ${
-                        STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
-                      }`}
+                      className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold capitalize ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
+                        }`}
                     >
                       {item.status}
                     </span>
@@ -163,6 +161,8 @@ export default function DaftarPeminjaman() {
                       <span className="font-semibold text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</span>
                     </div>
                   </div>
+
+                  <div className="border-t border-gray-100 mb-4 mt-4" />
 
                   {/* Action */}
                   <button
@@ -190,9 +190,8 @@ export default function DaftarPeminjaman() {
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`w-8 h-8 rounded-lg font-medium ${
-                  p === page ? 'bg-[#003399] text-white' : 'text-gray-500 hover:bg-gray-50'
-                }`}
+                className={`w-8 h-8 rounded-lg font-medium ${p === page ? 'bg-[#003399] text-white' : 'text-gray-500 hover:bg-gray-50'
+                  }`}
               >
                 {p}
               </button>
