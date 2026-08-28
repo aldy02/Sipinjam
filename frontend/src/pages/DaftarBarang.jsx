@@ -173,6 +173,8 @@ export default function DaftarBarang() {
                     Kondisi: {item.kondisi}
                   </p>
 
+                  <div className="border-t border-gray-100 mb-4 mt-4" />
+
                   {isAdmin ? (
                     <div className="flex items-center gap-2">
                       <button
