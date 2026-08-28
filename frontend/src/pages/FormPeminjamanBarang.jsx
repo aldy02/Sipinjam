@@ -99,21 +99,21 @@ export default function FormPeminjamanBarang() {
         }
     };
 
-const handleCloseModal = () => {
-    const wasSuccess = statusModal?.type === 'success';
+    const handleCloseModal = () => {
+        const wasSuccess = statusModal?.type === 'success';
 
-    setStatusModal(null);
+        setStatusModal(null);
 
-    if (wasSuccess) {
-        setForm({
-            equipment_id: '',
-            lokasi_pickup: '',
-            lokasi_pemakaian: '',
-            tanggal_rencana_kembali: '',
-            keterangan: '',
-        });
-    }
-};
+        if (wasSuccess) {
+            setForm({
+                equipment_id: '',
+                lokasi_pickup: '',
+                lokasi_pemakaian: '',
+                tanggal_rencana_kembali: '',
+                keterangan: '',
+            });
+        }
+    };
 
     const selectedEquipment = equipmentOptions.find(
         (eq) => String(eq.equipment_id) === String(form.equipment_id)
@@ -123,8 +123,8 @@ const handleCloseModal = () => {
         <MainLayout>
             <PageHeader breadcrumb="Sipinjam / Form Pinjam Barang" title="Form Pinjam Barang" />
 
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">
-                <div className="mb-8">
+            <div className="md:bg-white md:rounded-2xl md:shadow-sm p-0 md:p-6 lg:p-8">
+                <div className="mb-6 md:mb-8">
                     <h2 className="text-xl font-bold text-[#2B3674] mb-1">Form Peminjaman Barang</h2>
                     <p className="text-sm text-[#8789C0]">
                         Silakan lengkapi formulir di bawah ini untuk mengajukan peminjaman barang
@@ -133,7 +133,7 @@ const handleCloseModal = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Section: Barang Yang Dipinjam */}
-                    <div className="border border-gray-100 rounded-2xl p-6">
+                    <div className="bg-white rounded-2xl shadow-sm p-6 md:bg-transparent md:rounded-none md:shadow-none md:border md:border-gray-100">
                         <div className="flex items-start gap-3 mb-5">
                             <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
                                 <Package size={20} className="text-[#003399]" />
@@ -174,7 +174,7 @@ const handleCloseModal = () => {
                     </div>
 
                     {/* Section: Detail Peminjaman */}
-                    <div className="border border-gray-100 rounded-2xl p-6">
+                    <div className="bg-white rounded-2xl shadow-sm p-6 md:bg-transparent md:rounded-none md:shadow-none md:border md:border-gray-100">
                         <div className="flex items-start gap-3 mb-5">
                             <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
                                 <MapPin size={20} className="text-[#003399]" />
@@ -234,7 +234,7 @@ const handleCloseModal = () => {
                     </div>
 
                     {/* Section: Catatan Tambahan */}
-                    <div className="border border-gray-100 rounded-2xl p-6">
+                    <div className="bg-white rounded-2xl shadow-sm p-6 md:bg-transparent md:rounded-none md:shadow-none md:border md:border-gray-100">
                         <div className="flex items-start gap-3 mb-5">
                             <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
                                 <FileText size={20} className="text-[#003399]" />
