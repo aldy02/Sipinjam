@@ -1,11 +1,10 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: '/api',
   withCredentials: true,
 });
 
-// Auto logout & redirect to login when token expired/invalid,
 api.interceptors.response.use(
   (response) => response,
   (error) => {
