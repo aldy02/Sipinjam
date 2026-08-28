@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Package, ChevronDown, ChevronUp } from 'lucide-react';
+import { Package, ChevronDown, ChevronUp, Calendar, MapPin } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import PageHeader from '../components/PageHeader';
 import KembalikanBarangModal from '../components/KembalikanBarangModal';
@@ -96,13 +96,17 @@ export default function AktivitasSaya() {
                                     </div>
 
                                     <h3 className="font-bold text-[#2B3674] text-lg mb-0.5">{item.Equipment?.nama}</h3>
-                                    <p className="text-sm text-[#8789C0] mb-3">{item.Equipment?.kode_barang}</p>
+                                    <p className="text-sm text-[#5B69B9] mb-3">{item.Equipment?.kode_barang}</p>
 
-                                    <p className="text-xs text-[#8789C0] mb-1">
-                                        Dipinjam {formatTanggal(item.tanggal_pinjam)} • Rencana Kembali{' '}
+                                    <p className="flex items-center gap-1.5 text-xs text-[#8789C0] mb-1">
+                                        <Calendar size={14} className="shrink-0" />
+                                        Dipinjam {formatTanggal(item.tanggal_pinjam)} · Rencana kembali{' '}
                                         {formatTanggal(item.tanggal_rencana_kembali)}
                                     </p>
-                                    <p className="text-xs text-[#8789C0] mb-4">{item.lokasi_pemakaian}</p>
+                                    <p className="flex items-center gap-1.5 text-xs text-[#8789C0] mb-4">
+                                        <MapPin size={14} className="shrink-0" />
+                                        {item.lokasi_pemakaian}
+                                    </p>
 
                                     <button
                                         onClick={() => setKembalikanItem(item)}
