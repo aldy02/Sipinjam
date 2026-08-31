@@ -75,7 +75,7 @@ export default function KelolaAkun() {
           <h2 className="text-lg font-bold text-[#2B3674] mb-4">Daftar Akun Pengguna</h2>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="relative w-full sm:w-[26rem]">
+            <div className="relative w-full sm:w-104">
               <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8789C0]" />
               <input
                 type="text"
