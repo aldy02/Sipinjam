@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Package, MapPin, FileText } from 'lucide-react';
+import { Package, MapPin, FileText, Search, ChevronDown, Check } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import PageHeader from '../components/PageHeader';
 import PeminjamanStatusModal from '../components/PeminjamanStatusModal';
@@ -26,7 +26,12 @@ export default function FormPeminjamanBarang() {
     });
 
     const [loading, setLoading] = useState(false);
-    const [statusModal, setStatusModal] = useState(null); // { type: 'success' | 'error', message: ReactNode }
+    const [statusModal, setStatusModal] = useState(null);
+
+    // Search dropdown state (Barang)
+    const [equipmentDropdownOpen, setEquipmentDropdownOpen] = useState(false);
+    const [equipmentSearch, setEquipmentSearch] = useState('');
+    const equipmentDropdownRef = useRef(null);
 
     useEffect(() => {
         const fetchOptions = async () => {
@@ -47,9 +52,34 @@ export default function FormPeminjamanBarang() {
         fetchOptions();
     }, [preselectedId]);
 
+    // Tutup dropdown barang saat klik di luar area
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (equipmentDropdownRef.current && !equipmentDropdownRef.current.contains(e.target)) {
+                setEquipmentDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
+
+    const handleSelectEquipment = (equipment_id) => {
+        setForm((prev) => ({ ...prev, equipment_id }));
+        setEquipmentDropdownOpen(false);
+        setEquipmentSearch('');
+    };
+
+    const filteredEquipmentOptions = equipmentOptions.filter((eq) => {
+        const keyword = equipmentSearch.toLowerCase();
+        return (
+            eq.nama.toLowerCase().includes(keyword) ||
+            eq.kode_barang.toLowerCase().includes(keyword)
+        );
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -145,23 +175,81 @@ export default function FormPeminjamanBarang() {
                         </div>
 
                         <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">Barang</label>
-                        <select
-                            name="equipment_id"
-                            value={form.equipment_id}
-                            onChange={handleChange}
-                            disabled={loadingOptions}
-                            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] bg-white text-[#2B3674]"
-                            required
-                        >
-                            <option value="">
-                                {loadingOptions ? 'Memuat barang...' : 'Pilih barang...'}
-                            </option>
-                            {equipmentOptions.map((eq) => (
-                                <option key={eq.equipment_id} value={eq.equipment_id}>
-                                    {eq.kode_barang} - {eq.nama}
-                                </option>
-                            ))}
-                        </select>
+
+                        {/* Search dropdown */}
+                        <div className="relative" ref={equipmentDropdownRef}>
+                            <button
+                                type="button"
+                                onClick={() => setEquipmentDropdownOpen((prev) => !prev)}
+                                disabled={loadingOptions}
+                                className="w-full flex items-center justify-between px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] bg-white text-left disabled:bg-gray-50"
+                            >
+                                <span className={selectedEquipment ? 'text-[#2B3674]' : 'text-[#8789C0]'}>
+                                    {loadingOptions
+                                        ? 'Memuat barang...'
+                                        : selectedEquipment
+                                        ? `${selectedEquipment.kode_barang} - ${selectedEquipment.nama}`
+                                        : 'Pilih barang...'}
+                                </span>
+                                <ChevronDown
+                                    size={18}
+                                    className={`text-[#8789C0] transition-transform shrink-0 ml-2 ${
+                                        equipmentDropdownOpen ? 'rotate-180' : ''
+                                    }`}
+                                />
+                            </button>
+
+                            {equipmentDropdownOpen && (
+                                <div className="absolute z-20 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                    <div className="p-2 border-b border-gray-100">
+                                        <div className="relative">
+                                            <Search
+                                                size={16}
+                                                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8789C0]"
+                                            />
+                                            <input
+                                                type="text"
+                                                autoFocus
+                                                value={equipmentSearch}
+                                                onChange={(e) => setEquipmentSearch(e.target.value)}
+                                                placeholder="Cari nama atau kode barang..."
+                                                className="w-full pl-9 pr-3 py-2 text-sm placeholder-[#8789C0] text-[#2B3674] border border-gray-200 rounded-md outline-none focus:border-[#003399]"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="max-h-56 overflow-y-auto">
+                                        {filteredEquipmentOptions.length === 0 ? (
+                                            <p className="px-3.5 py-3 text-sm text-[#A3AED0] text-center">
+                                                Barang tidak ditemukan
+                                            </p>
+                                        ) : (
+                                            filteredEquipmentOptions.map((eq) => {
+                                                const isSelected = String(eq.equipment_id) === String(form.equipment_id);
+                                                return (
+                                                    <button
+                                                        key={eq.equipment_id}
+                                                        type="button"
+                                                        onClick={() => handleSelectEquipment(String(eq.equipment_id))}
+                                                        className={`w-full flex items-center justify-between gap-2 px-3.5 py-2.5 text-left text-sm hover:bg-blue-50 transition-colors ${
+                                                            isSelected ? 'bg-blue-50' : ''
+                                                        }`}
+                                                    >
+                                                        <span>
+                                                            <span className="font-medium text-[#2B3674]">{eq.nama}</span>
+                                                            <span className="block text-xs text-[#8789C0]">{eq.kode_barang}</span>
+                                                        </span>
+                                                        {isSelected && (
+                                                            <Check size={16} className="text-[#003399] shrink-0" />
+                                                        )}
+                                                    </button>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         {selectedEquipment && (
                             <p className="text-xs text-[#8789C0] mt-2">
