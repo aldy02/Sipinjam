@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 // Get Daftar Akun (List, Search, and Pagination)
 exports.getAllUsers = async (req, res) => {
   try {
-    const { search = '', page = 1, limit = 10, role } = req.query;
+    const { search = '', page = 1, limit = 10, role, status } = req.query;
     const offset = (page - 1) * limit;
 
     const where = {};
@@ -19,10 +19,15 @@ exports.getAllUsers = async (req, res) => {
     if (role) {
       where.role = role;
     }
+    if (status === 'aktif') {
+      where.is_active = true;
+    } else if (status === 'nonaktif') {
+      where.is_active = false;
+    }
 
     const { count, rows } = await User.findAndCountAll({
       where,
-      attributes: ['user_id', 'nama', 'nok', 'email', 'jabatan', 'role', 'created_at'],
+      attributes: ['user_id', 'nama', 'nok', 'email', 'jabatan', 'role', 'is_active', 'created_at'],
       order: [['created_at', 'DESC']],
       limit: parseInt(limit),
       offset: parseInt(offset),
@@ -37,6 +42,56 @@ exports.getAllUsers = async (req, res) => {
         limit: parseInt(limit),
       },
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Terjadi kesalahan server' });
+  }
+};
+
+// Nonaktif Akun
+exports.deactivateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (String(req.user.user_id) === String(id)) {
+      return res.status(400).json({ message: 'Tidak bisa menonaktifkan akun sendiri' });
+    }
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Akun tidak ditemukan' });
+    }
+
+    if (!user.is_active) {
+      return res.status(400).json({ message: 'Akun ini sudah nonaktif' });
+    }
+
+    await user.update({ is_active: false });
+
+    res.json({ message: 'Akun berhasil dinonaktifkan' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Terjadi kesalahan server' });
+  }
+};
+
+// Aktifkan Akun
+exports.activateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Akun tidak ditemukan' });
+    }
+
+    if (user.is_active) {
+      return res.status(400).json({ message: 'Akun ini sudah aktif' });
+    }
+
+    await user.update({ is_active: true });
+
+    res.json({ message: 'Akun berhasil diaktifkan kembali' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Terjadi kesalahan server' });
@@ -195,29 +250,6 @@ exports.resetUserPassword = async (req, res) => {
     await user.update({ password: hashedPassword });
 
     res.json({ message: 'Password akun berhasil direset' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Terjadi kesalahan server' });
-  }
-};
-
-// Delete Akun
-exports.deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (String(req.user.user_id) === String(id)) {
-      return res.status(400).json({ message: 'Tidak bisa menghapus akun sendiri' });
-    }
-
-    const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).json({ message: 'Akun tidak ditemukan' });
-    }
-
-    await user.destroy();
-
-    res.json({ message: 'Akun berhasil dihapus' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Terjadi kesalahan server' });

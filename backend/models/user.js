@@ -39,6 +39,11 @@ const User = sequelize.define('User', {
   reset_token_expires: {
     type: DataTypes.DATE,
   },
+    is_active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  },
 }, {
   tableName: 'user',
   timestamps: true,

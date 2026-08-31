@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { X, Trash2, CheckCircle2 } from 'lucide-react';
-import { createUser, updateUser, deleteUser } from '../api/users';
+import { X, UserX, CheckCircle2 } from 'lucide-react';
+import { createUser, updateUser, deactivateUser } from '../api/users';
 
 const ROLE_OPTIONS = ['karyawan', 'admin'];
 
 export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form', initialData }) {
   const isEdit = mode === 'edit';
-  const isDelete = mode === 'delete';
+  const isDeactivate = mode === 'deactivate';
 
   const [form, setForm] = useState({
     nama: '',
@@ -21,7 +21,7 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
   const [successView, setSuccessView] = useState(false);
 
   useEffect(() => {
-    if (initialData && (isEdit || isDelete)) {
+    if (initialData && (isEdit || isDeactivate)) {
       setForm({
         nama: initialData.nama || '',
         nok: initialData.nok || '',
@@ -35,7 +35,7 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
     }
     setError('');
     setSuccessView(false);
-  }, [initialData, isOpen, isEdit, isDelete]);
+  }, [initialData, isOpen, isEdit, isDeactivate]);
 
   if (!isOpen) return null;
 
@@ -80,14 +80,14 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
     }
   };
 
-  const handleDelete = async () => {
+  const handleDeactivate = async () => {
     try {
       setLoading(true);
-      await deleteUser(initialData.user_id);
+      await deactivateUser(initialData.user_id);
       onSuccess();
       onClose();
     } catch (err) {
-      setError(err.response?.data?.message || 'Gagal menghapus akun');
+      setError(err.response?.data?.message || 'Gagal menonaktifkan akun');
     } finally {
       setLoading(false);
     }
@@ -127,8 +127,8 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
     );
   }
 
-  // Delete Confirmation
-  if (isDelete) {
+  // Deactive Confirmation
+  if (isDeactivate) {
     return (
       <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-3xl w-full max-w-md p-8 relative">
@@ -140,18 +140,16 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
           </button>
 
           <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-5">
-            <Trash2 size={28} className="text-red-500" />
+            <UserX size={28} className="text-red-500" />
           </div>
 
-          <h2 className="text-2xl font-bold text-[#2B3674] mb-2">Hapus Data!</h2>
+          <h2 className="text-2xl font-bold text-[#2B3674] mb-2">Nonaktifkan Akun!</h2>
           <p className="text-[15px] text-[#8789C0] mb-8 leading-relaxed">
-            Apakah Anda yakin ingin menghapus akun{' '}
+            Apakah Anda yakin ingin menonaktifkan akun{' '}
             <span className="font-semibold text-[#5B69B9]">
               {initialData?.nama} ({initialData?.email})
             </span>
-            ?
-            <br />
-            Tindakan ini tidak dapat dibatalkan!
+            ? Akun tidak akan bisa login sampai diaktifkan kembali. Riwayat peminjaman tetap tersimpan.
           </p>
 
           {error && (
@@ -168,11 +166,11 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
               Batal
             </button>
             <button
-              onClick={handleDelete}
+              onClick={handleDeactivate}
               disabled={loading}
               className="flex-1 py-3.5 rounded-2xl bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white font-semibold text-sm transition-colors"
             >
-              {loading ? 'Menghapus...' : 'Hapus'}
+              {loading ? 'Memproses...' : 'Nonaktifkan'}
             </button>
           </div>
         </div>

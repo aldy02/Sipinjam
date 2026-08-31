@@ -50,6 +50,11 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Email atau password salah' });
     }
 
+    // Non Aktif Akun
+    if (!user.is_active) {
+      return res.status(403).json({ message: 'Akun ini telah dinonaktifkan. Hubungi administrator.' });
+    }
+
     const token = jwt.sign(
       { user_id: user.user_id, role: user.role },
       process.env.JWT_SECRET,
