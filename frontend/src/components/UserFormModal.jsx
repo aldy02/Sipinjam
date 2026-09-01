@@ -254,7 +254,7 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">Pe Pabrik</label>
+            <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">PE Pabrik</label>
             <select
               value={form.pe_pabrik}
               onChange={(e) => setForm({ ...form, pe_pabrik: e.target.value })}

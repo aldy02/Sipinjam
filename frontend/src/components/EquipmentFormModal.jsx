@@ -8,7 +8,7 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
   const isEdit = mode === 'edit';
   const isDelete = mode === 'delete';
 
-  const [form, setForm] = useState({ nama: '', kondisi: 'baik', deskripsi: '' });
+  const [form, setForm] = useState({ kode_barang: '', nama: '', kondisi: 'baik', deskripsi: '' });
   const [isLainnya, setIsLainnya] = useState(false);
   const [kondisiLainnya, setKondisiLainnya] = useState('');
   const [error, setError] = useState('');
@@ -21,6 +21,7 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
       const isCustom = !KONDISI_OPTIONS.includes(kondisiAwal);
 
       setForm({
+        kode_barang: initialData.kode_barang || '',
         nama: initialData.nama,
         kondisi: isCustom ? '' : kondisiAwal,
         deskripsi: initialData.deskripsi || '',
@@ -28,7 +29,7 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
       setIsLainnya(isCustom);
       setKondisiLainnya(isCustom ? initialData.kondisi : '');
     } else {
-      setForm({ nama: '', kondisi: 'baik', deskripsi: '' });
+      setForm({ kode_barang: '', nama: '', kondisi: 'baik', deskripsi: '' });
       setIsLainnya(false);
       setKondisiLainnya('');
     }
@@ -52,6 +53,11 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!form.kode_barang.trim()) {
+      setError('Kode barang wajib diisi');
+      return;
+    }
 
     if (!form.nama.trim()) {
       setError('Nama barang wajib diisi');
@@ -104,38 +110,38 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
     }`;
 
   // Success (setelah tambah/edit berhasil)
-if (successView) {
-  return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl w-full max-w-md p-8 relative">
-        <button
-          onClick={onClose}
-          className="absolute right-6 top-6 text-gray-400 hover:text-gray-600"
-        >
-          <X size={22} />
-        </button>
+  if (successView) {
+    return (
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-3xl w-full max-w-md p-8 relative">
+          <button
+            onClick={onClose}
+            className="absolute right-6 top-6 text-gray-400 hover:text-gray-600"
+          >
+            <X size={22} />
+          </button>
 
-        <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-5">
-          <CheckCircle2 size={30} className="text-[#027959]" />
+          <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-5">
+            <CheckCircle2 size={30} className="text-[#027959]" />
+          </div>
+
+          <h2 className="text-2xl font-bold text-[#2B3674] mb-2">Berhasil!</h2>
+          <p className="text-[15px] text-[#8789C0] mb-8 leading-relaxed">
+            Data barang{' '}
+            <span className="font-semibold text-[#5B69B9]">{form.nama}</span>{' '}
+            berhasil {isEdit ? 'diperbarui' : 'ditambahkan'}.
+          </p>
+
+          <button
+            onClick={onClose}
+            className="w-full py-3.5 rounded-2xl bg-[#027959] hover:bg-green-800 text-white font-semibold text-sm transition-colors"
+          >
+            OK
+          </button>
         </div>
-
-        <h2 className="text-2xl font-bold text-[#2B3674] mb-2">Berhasil!</h2>
-        <p className="text-[15px] text-[#8789C0] mb-8 leading-relaxed">
-          Data barang{' '}
-          <span className="font-semibold text-[#5B69B9]">{form.nama}</span>{' '}
-          berhasil {isEdit ? 'diperbarui' : 'ditambahkan'}.
-        </p>
-
-        <button
-          onClick={onClose}
-          className="w-full py-3.5 rounded-2xl bg-[#027959] hover:bg-green-800 text-white font-semibold text-sm transition-colors"
-        >
-          OK
-        </button>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   // Delete Confirmation
   if (isDelete) {
@@ -214,6 +220,21 @@ if (successView) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
+              Kode Barang
+            </label>
+            <input
+              type="text"
+              value={form.kode_barang}
+              onChange={(e) => setForm({ ...form, kode_barang: e.target.value })}
+              placeholder="Masukkan kode barang"
+              className="w-full placeholder-[#8789C0] 
+              text-[#2B3674] px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] disabled:bg-gray-50 disabled:text-gray-400"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
               Nama Barang
             </label>
             <input
@@ -276,12 +297,6 @@ if (successView) {
               className="w-full placeholder-[#8789C0] text-[#2B3674] px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] resize-none"
             />
           </div>
-
-          {!isEdit && (
-            <p className="text-xs text-gray-400">
-              Kode barang akan digenerate otomatis oleh sistem.
-            </p>
-          )}
 
           <button
             type="submit"

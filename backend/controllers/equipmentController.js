@@ -55,30 +55,22 @@ exports.getEquipmentById = async (req, res) => {
   }
 };
 
-// Add Barang (admin only, kode_barang auto generate)
+// Add Barang (admin only, kode_barang di input admin)
 exports.createEquipment = async (req, res) => {
   try {
-    const { nama, kondisi, deskripsi } = req.body;
+    const { kode_barang, nama, kondisi, deskripsi } = req.body;
 
-    if (!nama) {
-      return res.status(400).json({ message: 'Nama barang wajib diisi' });
+    if (!nama || !kode_barang) {
+      return res.status(400).json({ message: 'Kode barang dan nama barang wajib diisi' });
     }
 
-    // Cari kode_barang terakhir, urutkan dari nomor terbesar
-    const lastEquipment = await Equipment.findOne({
-      order: [['equipment_id', 'DESC']],
-    });
-
-    let nextNumber = 1;
-    if (lastEquipment) {
-      const lastNumber = parseInt(lastEquipment.kode_barang.split('-')[1], 10);
-      nextNumber = lastNumber + 1;
+    const existingKode = await Equipment.findOne({ where: { kode_barang } });
+    if (existingKode) {
+      return res.status(400).json({ message: 'Kode barang sudah digunakan' });
     }
-
-    const kodeBarang = `BRNG-${String(nextNumber).padStart(3, '0')}`;
 
     const equipment = await Equipment.create({
-      kode_barang: kodeBarang,
+      kode_barang,
       nama,
       kondisi: kondisi || 'baik',
       deskripsi,
@@ -95,14 +87,22 @@ exports.createEquipment = async (req, res) => {
 exports.updateEquipment = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nama, kondisi, status, deskripsi } = req.body;
+    const { kode_barang, nama, kondisi, status, deskripsi } = req.body;
 
     const equipment = await Equipment.findByPk(id);
     if (!equipment) {
       return res.status(404).json({ message: 'Barang tidak ditemukan' });
     }
 
+    if (kode_barang && kode_barang !== equipment.kode_barang) {
+      const existingKode = await Equipment.findOne({ where: { kode_barang } });
+      if (existingKode) {
+        return res.status(400).json({ message: 'Kode barang sudah digunakan oleh barang lain' });
+      }
+    }
+
     await equipment.update({
+      kode_barang: kode_barang ?? equipment.kode_barang,
       nama: nama ?? equipment.nama,
       kondisi: kondisi ?? equipment.kondisi,
       status: status ?? equipment.status,
