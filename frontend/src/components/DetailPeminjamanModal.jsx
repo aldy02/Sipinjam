@@ -53,7 +53,7 @@ export default function DetailPeminjamanModal({ isOpen, onClose, data }) {
 
         <div className="border-t border-gray-100 pt-1">
           <DetailRow label="Peminjam" value={data.User?.nama} />
-          <DetailRow label="NOK" value={data.User?.nok} />
+          <DetailRow label="NPK" value={data.User?.npk} />
           <DetailRow label="Kode Barang" value={data.Equipment?.kode_barang} />
           <DetailRow label="Nama Barang" value={data.Equipment?.nama} />
           <DetailRow label="Kondisi Saat Pinjam" value={data.kondisi_saat_pinjam} valueClass="capitalize" />

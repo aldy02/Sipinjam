@@ -84,14 +84,14 @@ export default function KelolaAkun() {
                   setPage(1);
                   setSearch(e.target.value);
                 }}
-                placeholder="Cari berdasarkan nama, email, atau NOK..."
+                placeholder="Cari berdasarkan nama, email, atau NPK..."
                 className="w-full pl-10 pr-4 py-2.5 placeholder-[#8789C0] text-[#2B3674] border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399]"
               />
             </div>
 
             <button
               onClick={() => setModal({ mode: 'add', item: null })}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#F75807] hover:bg-[#e04e05] text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#F75807] hover:bg-[#e04e05] text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
             >
               <Plus size={18} />
               Tambah Akun
@@ -111,7 +111,7 @@ export default function KelolaAkun() {
                 <thead>
                   <tr className="text-left text-[#A3AED0] border-b border-gray-100">
                     <th className="pb-3 font-medium">Nama</th>
-                    <th className="pb-3 font-medium">NOK</th>
+                    <th className="pb-3 font-medium">NPK</th>
                     <th className="pb-3 font-medium">Email</th>
                     <th className="pb-3 font-medium">Jabatan</th>
                     <th className="pb-3 font-medium">Role</th>
@@ -123,7 +123,7 @@ export default function KelolaAkun() {
                   {items.map((item) => (
                     <tr key={item.user_id} className="border-b border-gray-50 last:border-0">
                       <td className="py-4 font-medium text-[#2B3674]">{item.nama}</td>
-                      <td className="py-4 text-[#2B3674]">{item.nok}</td>
+                      <td className="py-4 text-[#2B3674]">{item.npk}</td>
                       <td className="py-4 text-[#2B3674]">{item.email}</td>
                       <td className="py-4 text-[#2B3674]">{item.jabatan || '-'}</td>
                       <td className="py-4">
@@ -209,8 +209,8 @@ export default function KelolaAkun() {
 
                   <div className="space-y-3 mb-4">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-sm text-[#5B69B9] shrink-0">NOK</span>
-                      <span className="text-sm font-semibold text-[#2B3674] text-right">{item.nok}</span>
+                      <span className="text-sm text-[#5B69B9] shrink-0">NPK</span>
+                      <span className="text-sm font-semibold text-[#2B3674] text-right">{item.npk}</span>
                     </div>
                     <div>
                       <span className="text-sm text-[#5B69B9] block mb-0.5">Jabatan</span>

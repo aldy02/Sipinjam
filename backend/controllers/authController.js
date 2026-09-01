@@ -9,10 +9,14 @@ require('dotenv').config();
 // Sign Up
 exports.signup = async (req, res) => {
   try {
-    const { nama, nok, email, jabatan, password } = req.body;
+    const { nama, npk, email, jabatan, pe_pabrik, password } = req.body;
 
-    if (!nama || !nok || !email || !password) {
+    if (!nama || !npk || !email || !password) {
       return res.status(400).json({ message: 'Field wajib tidak boleh kosong' });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'Password minimal 8 karakter' });
     }
 
     const existing = await User.findOne({ where: { email } });
@@ -20,13 +24,13 @@ exports.signup = async (req, res) => {
       return res.status(400).json({ message: 'Email sudah terdaftar' });
     }
 
-    const existingNok = await User.findOne({ where: { nok } });
-    if (existingNok) {
-      return res.status(400).json({ message: 'NOK sudah terdaftar' });
+    const existingNpk = await User.findOne({ where: { npk } });
+    if (existingNpk) {
+      return res.status(400).json({ message: 'NPK sudah terdaftar' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ nama, nok, email, jabatan, password: hashedPassword });
+    const user = await User.create({ nama, npk, email, jabatan, pe_pabrik, password: hashedPassword });
 
     res.status(201).json({ message: 'Registrasi berhasil', user_id: user.user_id });
   } catch (err) {
@@ -74,7 +78,7 @@ exports.login = async (req, res) => {
       user: {
         user_id: user.user_id,
         nama: user.nama,
-        nok: user.nok,
+        npk: user.npk,
         email: user.email,
         jabatan: user.jabatan,
         role: user.role,
@@ -173,7 +177,7 @@ exports.resetPassword = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.user_id, {
-      attributes: ['user_id', 'nama', 'nok', 'email', 'jabatan', 'role'],
+      attributes: ['user_id', 'nama', 'npk', 'email', 'jabatan', 'pe_pabrik', 'role'],
     });
 
     if (!user) {
@@ -190,10 +194,10 @@ exports.getProfile = async (req, res) => {
 // Update Profile
 exports.updateProfile = async (req, res) => {
   try {
-    const { nama, nok, email, jabatan } = req.body;
+    const { nama, npk, email, jabatan, pe_pabrik } = req.body;
 
-    if (!nama || !nok || !email) {
-      return res.status(400).json({ message: 'Nama, NOK, dan email wajib diisi' });
+    if (!nama || !npk || !email) {
+      return res.status(400).json({ message: 'Nama, NPK, dan email wajib diisi' });
     }
 
     const user = await User.findByPk(req.user.user_id);
@@ -209,19 +213,20 @@ exports.updateProfile = async (req, res) => {
       }
     }
 
-    // Check NOK saat diganti tidak bentrok dengan user lain
-    if (nok !== user.nok) {
-      const existingNok = await User.findOne({ where: { nok } });
-      if (existingNok) {
-        return res.status(400).json({ message: 'NOK sudah digunakan oleh akun lain' });
+    // Check NpK saat diganti tidak bentrok dengan user lain
+    if (npk !== user.npk) {
+      const existingNpk = await User.findOne({ where: { npk } });
+      if (existingNpk) {
+        return res.status(400).json({ message: 'NPK sudah digunakan oleh akun lain' });
       }
     }
 
     await user.update({
       nama,
-      nok,
+      npk,
       email,
       jabatan: jabatan ?? user.jabatan,
+      pe_pabrik: pe_pabrik ?? user.pe_pabrik,
     });
 
     res.json({
@@ -229,9 +234,10 @@ exports.updateProfile = async (req, res) => {
       data: {
         user_id: user.user_id,
         nama: user.nama,
-        nok: user.nok,
+        npk: user.npk,
         email: user.email,
         jabatan: user.jabatan,
+        pe_pabrik: user.pe_pabrik,
         role: user.role,
       },
     });
@@ -250,8 +256,8 @@ exports.changePassword = async (req, res) => {
       return res.status(400).json({ message: 'Semua field password wajib diisi' });
     }
 
-    if (password_baru.length < 6) {
-      return res.status(400).json({ message: 'Password baru minimal 6 karakter' });
+    if (password_baru.length < 8) {
+      return res.status(400).json({ message: 'Password baru minimal 8 karakter' });
     }
 
     if (password_baru !== konfirmasi_password_baru) {
@@ -287,7 +293,7 @@ exports.changePassword = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.user_id, {
-      attributes: ['user_id', 'nama', 'nok', 'email', 'jabatan', 'role'],
+      attributes: ['user_id', 'nama', 'npk', 'email', 'jabatan', 'role'],
     });
 
     if (!user) {

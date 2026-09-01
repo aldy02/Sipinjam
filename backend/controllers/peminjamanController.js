@@ -90,7 +90,7 @@ exports.getAllPeminjaman = async (req, res) => {
       where,
       include: [
         { model: Equipment, attributes: ['equipment_id', 'kode_barang', 'nama'] },
-        { model: User, attributes: ['user_id', 'nama', 'nok', 'email'] },
+        { model: User, attributes: ['user_id', 'nama', 'npk', 'email'] },
       ],
       order: [['created_at', 'DESC']],
       limit: parseInt(limit),
@@ -121,7 +121,7 @@ exports.getPeminjamanById = async (req, res) => {
     const peminjaman = await Peminjaman.findByPk(id, {
       include: [
         { model: Equipment, attributes: ['equipment_id', 'kode_barang', 'nama'] },
-        { model: User, attributes: ['user_id', 'nama', 'nok', 'email'] },
+        { model: User, attributes: ['user_id', 'nama', 'npk', 'email'] },
       ],
     });
 

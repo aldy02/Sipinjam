@@ -5,14 +5,17 @@ import { motion } from 'framer-motion';
 import api from '../api/axios';
 import gambarPupukKaltim from '../assets/gambar-pupukkaltim.jpg';
 
+const PABRIK_OPTIONS = ['Pabrik-1A', 'Pabrik-2', 'Pabrik-3', 'Pabrik-4', 'Pabrik-5', 'Pabrik-6', 'PHP'];
+
 export default function Signup() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     email: '',
-    nok: '',
+    npk: '',
     nama: '',
     jabatan: '',
+    pe_pabrik: '',
     password: '',
     konfirmasiPassword: '',
   });
@@ -35,8 +38,8 @@ export default function Signup() {
       return;
     }
 
-    if (form.password.length < 6) {
-      setError('Password minimal 6 karakter');
+    if (form.password.length < 8) {
+      setError('Password minimal 8 karakter');
       return;
     }
 
@@ -44,9 +47,10 @@ export default function Signup() {
       setLoading(true);
       await api.post('/auth/signup', {
         nama: form.nama,
-        nok: form.nok,
+        npk: form.npk,
         email: form.email,
         jabatan: form.jabatan,
+        pe_pabrik: form.pe_pabrik || null,
         password: form.password,
       });
 
@@ -105,13 +109,13 @@ export default function Signup() {
 
             <div>
               <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
-                NOK
+                NPK
               </label>
               <input
                 type="text"
-                name="nok"
-                placeholder="Masukkan NOK"
-                value={form.nok}
+                name="npk"
+                placeholder="Masukkan NPK"
+                value={form.npk}
                 onChange={handleChange}
                 required
                 className="w-full px-3.5 py-2.5 text-[#2B3674] border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
@@ -146,6 +150,21 @@ export default function Signup() {
                 required
                 className="w-full px-3.5 py-2.5 text-[#2B3674] border placeholder-[#8789C0] border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] transition-colors"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">Pe Pabrik</label>
+              <select
+                name="pe_pabrik"
+                value={form.pe_pabrik}
+                onChange={handleChange}
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] bg-white"
+              >
+                <option value="">Pilih PE Pabrik</option>
+                {PABRIK_OPTIONS.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
             </div>
 
             <div>

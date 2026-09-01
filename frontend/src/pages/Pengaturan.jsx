@@ -11,11 +11,12 @@ const EMPTY_PASSWORD_FORM = {
   password_baru: '',
   konfirmasi_password_baru: '',
 };
+const PABRIK_OPTIONS = ['Pabrik-1A', 'Pabrik-2', 'Pabrik-3', 'Pabrik-4', 'Pabrik-5', 'Pabrik-6', 'PHP'];
 
 export default function Pengaturan() {
   const { user, setUser } = useAuth();
 
-  const [profileForm, setProfileForm] = useState({ nama: '', nok: '', email: '', jabatan: '' });
+  const [profileForm, setProfileForm] = useState({ nama: '', npk: '', email: '', jabatan: '', pe_pabrik: '' });
   const [originalProfile, setOriginalProfile] = useState(null);
 
   const [passwordForm, setPasswordForm] = useState(EMPTY_PASSWORD_FORM);
@@ -37,9 +38,10 @@ export default function Pengaturan() {
         const data = res.data.data;
         const loaded = {
           nama: data.nama || '',
-          nok: data.nok || '',
+          npk: data.npk || '',
           email: data.email || '',
           jabatan: data.jabatan || '',
+          pe_pabrik: data.pe_pabrik || '',
         };
         setProfileForm(loaded);
         setOriginalProfile(loaded);
@@ -63,9 +65,10 @@ export default function Pengaturan() {
   const isProfileChanged =
     originalProfile &&
     (profileForm.nama !== originalProfile.nama ||
-      profileForm.nok !== originalProfile.nok ||
+      profileForm.npk !== originalProfile.npk ||
       profileForm.email !== originalProfile.email ||
-      profileForm.jabatan !== originalProfile.jabatan);
+      profileForm.jabatan !== originalProfile.jabatan ||
+      profileForm.pe_pabrik !== originalProfile.pe_pabrik);
 
   const isPasswordChanged =
     passwordForm.password_lama.trim() !== '' ||
@@ -73,8 +76,8 @@ export default function Pengaturan() {
     passwordForm.konfirmasi_password_baru.trim() !== '';
 
   const runProfileStep = async () => {
-    if (!profileForm.nama.trim() || !profileForm.nok.trim() || !profileForm.email.trim()) {
-      setStatusModal({ type: 'error', message: 'Nama, NOK, dan email wajib diisi' });
+    if (!profileForm.nama.trim() || !profileForm.npk.trim() || !profileForm.email.trim()) {
+      setStatusModal({ type: 'error', message: 'Nama, NPK, dan email wajib diisi' });
       return;
     }
 
@@ -198,11 +201,11 @@ export default function Pengaturan() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">NOK</label>
+                <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">NPK</label>
                 <input
                   type="text"
-                  name="nok"
-                  value={profileForm.nok}
+                  name="npk"
+                  value={profileForm.npk}
                   onChange={handleProfileChange}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] text-[#2B3674]"
                 />
@@ -217,6 +220,21 @@ export default function Pengaturan() {
                   onChange={handleProfileChange}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] text-[#2B3674]"
                 />
+              </div>
+
+              <div className='md:col-span-2'>
+                <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">PE Pabrik</label>
+                <select
+                  name="pe_pabrik"
+                  value={profileForm.pe_pabrik}
+                  onChange={handleProfileChange}
+                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] bg-white text-[#2B3674]"
+                >
+                  <option value="">Belum dipilih</option>
+                  {PABRIK_OPTIONS.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>

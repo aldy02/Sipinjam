@@ -11,7 +11,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING(100),
     allowNull: false,
   },
-  nok: {
+  npk: {
     type: DataTypes.STRING(30),
     allowNull: false,
     unique: true,
@@ -23,6 +23,10 @@ const User = sequelize.define('User', {
   },
   jabatan: {
     type: DataTypes.STRING(100),
+  },
+    pe_pabrik: {
+    type: DataTypes.ENUM('Pabrik-2', 'Pabrik-3', 'Pabrik-4', 'Pabrik-1A', 'Pabrik-5', 'Pabrik-6', 'PHP'),
+    allowNull: true,
   },
   password: {
     type: DataTypes.STRING(255),

@@ -13,7 +13,7 @@ exports.getAllUsers = async (req, res) => {
       where[Op.or] = [
         { nama: { [Op.like]: `%${search}%` } },
         { email: { [Op.like]: `%${search}%` } },
-        { nok: { [Op.like]: `%${search}%` } },
+        { npk: { [Op.like]: `%${search}%` } },
       ];
     }
     if (role) {
@@ -27,7 +27,7 @@ exports.getAllUsers = async (req, res) => {
 
     const { count, rows } = await User.findAndCountAll({
       where,
-      attributes: ['user_id', 'nama', 'nok', 'email', 'jabatan', 'role', 'is_active', 'created_at'],
+      attributes: ['user_id', 'nama', 'npk', 'email', 'jabatan', 'pe_pabrik', 'role', 'is_active', 'created_at'],
       order: [['created_at', 'DESC']],
       limit: parseInt(limit),
       offset: parseInt(offset),
@@ -103,7 +103,7 @@ exports.getUserById = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findByPk(id, {
-      attributes: ['user_id', 'nama', 'nok', 'email', 'jabatan', 'role', 'created_at'],
+      attributes: ['user_id', 'nama', 'npk', 'email', 'jabatan', 'pe_pabrik', 'role', 'created_at'],
     });
 
     if (!user) {
@@ -120,14 +120,14 @@ exports.getUserById = async (req, res) => {
 // Add Akun
 exports.createUser = async (req, res) => {
   try {
-    const { nama, nok, email, jabatan, password, role } = req.body;
+    const { nama, npk, email, jabatan, pe_pabrik, password, role } = req.body;
 
-    if (!nama || !nok || !email || !password) {
-      return res.status(400).json({ message: 'Nama, NOK, email, dan password wajib diisi' });
+    if (!nama || !npk || !email || !password) {
+      return res.status(400).json({ message: 'Nama, NPK, email, dan password wajib diisi' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ message: 'Password minimal 6 karakter' });
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'Password minimal 8 karakter' });
     }
 
     if (role && !['karyawan', 'admin'].includes(role)) {
@@ -139,18 +139,19 @@ exports.createUser = async (req, res) => {
       return res.status(400).json({ message: 'Email sudah terdaftar' });
     }
 
-    const existingNok = await User.findOne({ where: { nok } });
-    if (existingNok) {
-      return res.status(400).json({ message: 'NOK sudah terdaftar' });
+    const existingNpk = await User.findOne({ where: { npk } });
+    if (existingNpk) {
+      return res.status(400).json({ message: 'NPK sudah terdaftar' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       nama,
-      nok,
+      npk,
       email,
       jabatan,
+      pe_pabrik,
       password: hashedPassword,
       role: role || 'karyawan',
     });
@@ -160,9 +161,10 @@ exports.createUser = async (req, res) => {
       data: {
         user_id: user.user_id,
         nama: user.nama,
-        nok: user.nok,
+        npk: user.npk,
         email: user.email,
         jabatan: user.jabatan,
+        pe_pabrik: user.pe_pabrik,
         role: user.role,
       },
     });
@@ -176,7 +178,7 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nama, nok, email, jabatan, role } = req.body;
+    const { nama, npk, email, jabatan, pe_pabrik, role } = req.body;
 
     const user = await User.findByPk(id);
     if (!user) {
@@ -199,18 +201,19 @@ exports.updateUser = async (req, res) => {
       }
     }
 
-    if (nok && nok !== user.nok) {
-      const existingNok = await User.findOne({ where: { nok } });
-      if (existingNok) {
-        return res.status(400).json({ message: 'NOK sudah digunakan oleh akun lain' });
+    if (npk && npk !== user.npk) {
+      const existingNpk = await User.findOne({ where: { npk } });
+      if (existingNpk) {
+        return res.status(400).json({ message: 'NPK sudah digunakan oleh akun lain' });
       }
     }
 
     await user.update({
       nama: nama ?? user.nama,
-      nok: nok ?? user.nok,
+      npk: npk ?? user.npk,
       email: email ?? user.email,
       jabatan: jabatan ?? user.jabatan,
+      pe_pabrik: pe_pabrik ?? user.pe_pabrik,
       role: role ?? user.role,
     });
 
@@ -219,9 +222,10 @@ exports.updateUser = async (req, res) => {
       data: {
         user_id: user.user_id,
         nama: user.nama,
-        nok: user.nok,
+        npk: user.npk,
         email: user.email,
         jabatan: user.jabatan,
+        pe_pabrik: user.pe_pabrik,
         role: user.role,
       },
     });
@@ -237,8 +241,8 @@ exports.resetUserPassword = async (req, res) => {
     const { id } = req.params;
     const { password_baru } = req.body;
 
-    if (!password_baru || password_baru.length < 6) {
-      return res.status(400).json({ message: 'Password baru minimal 6 karakter' });
+    if (!password_baru || password_baru.length < 8) {
+      return res.status(400).json({ message: 'Password baru minimal 8 karakter' });
     }
 
     const user = await User.findByPk(id);

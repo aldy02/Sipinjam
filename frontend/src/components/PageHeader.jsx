@@ -20,7 +20,7 @@ export default function PageHeader({ breadcrumb, title }) {
         </div>
         <div className="hidden sm:block">
           <p className="text-sm font-bold text-[#38437C]">{user?.nama}</p>
-          <p className="text-xs text-[#8789C0]">{user?.nok || user?.email}</p>
+          <p className="text-xs text-[#8789C0]">{user?.npk || user?.email}</p>
         </div>
       </div>
     </div>

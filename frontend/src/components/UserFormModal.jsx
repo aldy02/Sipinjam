@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { X, UserX, CheckCircle2 } from 'lucide-react';
+import { X, UserX, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { createUser, updateUser, deactivateUser } from '../api/users';
 
 const ROLE_OPTIONS = ['karyawan', 'admin'];
+const PABRIK_OPTIONS = ['Pabrik-1A', 'Pabrik-2', 'Pabrik-3', 'Pabrik-4', 'Pabrik-5', 'Pabrik-6', 'PHP'];
 
 export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form', initialData }) {
   const isEdit = mode === 'edit';
@@ -10,28 +11,31 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
 
   const [form, setForm] = useState({
     nama: '',
-    nok: '',
+    npk: '',
     email: '',
     jabatan: '',
+    pe_pabrik: '',
     password: '',
     role: 'karyawan',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successView, setSuccessView] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (initialData && (isEdit || isDeactivate)) {
       setForm({
         nama: initialData.nama || '',
-        nok: initialData.nok || '',
+        npk: initialData.npk || '',
         email: initialData.email || '',
         jabatan: initialData.jabatan || '',
+        pe_pabrik: initialData.pe_pabrik || '',
         password: '',
         role: initialData.role || 'karyawan',
       });
     } else {
-      setForm({ nama: '', nok: '', email: '', jabatan: '', password: '', role: 'karyawan' });
+      setForm({ nama: '', npk: '', email: '', jabatan: '', pe_pabrik: '', password: '', role: 'karyawan' });
     }
     setError('');
     setSuccessView(false);
@@ -43,8 +47,8 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
     e.preventDefault();
     setError('');
 
-    if (!form.nama.trim() || !form.nok.trim() || !form.email.trim()) {
-      setError('Nama, NOK, dan email wajib diisi');
+    if (!form.nama.trim() || !form.npk.trim() || !form.email.trim()) {
+      setError('Nama, NPK, dan email wajib diisi');
       return;
     }
 
@@ -53,8 +57,8 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
       return;
     }
 
-    if (!isEdit && form.password.length < 6) {
-      setError('Password minimal 6 karakter');
+    if (!isEdit && form.password.length < 8) {
+      setError('Password minimal 8 karakter');
       return;
     }
 
@@ -63,9 +67,10 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
       if (isEdit) {
         await updateUser(initialData.user_id, {
           nama: form.nama,
-          nok: form.nok,
+          npk: form.npk,
           email: form.email,
           jabatan: form.jabatan,
+          pe_pabrik: form.pe_pabrik,
           role: form.role,
         });
       } else {
@@ -213,12 +218,12 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">NOK</label>
+            <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">NPK</label>
             <input
               type="text"
-              value={form.nok}
-              onChange={(e) => setForm({ ...form, nok: e.target.value })}
-              placeholder="Masukkan NOK"
+              value={form.npk}
+              onChange={(e) => setForm({ ...form, npk: e.target.value })}
+              placeholder="Masukkan NPK"
               className="w-full placeholder-[#8789C0] text-[#2B3674] px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399]"
               required
             />
@@ -244,20 +249,45 @@ export default function UserFormModal({ isOpen, onClose, onSuccess, mode = 'form
               onChange={(e) => setForm({ ...form, jabatan: e.target.value })}
               placeholder="Masukkan jabatan"
               className="w-full placeholder-[#8789C0] text-[#2B3674] px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399]"
+              required
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">Pe Pabrik</label>
+            <select
+              value={form.pe_pabrik}
+              onChange={(e) => setForm({ ...form, pe_pabrik: e.target.value })}
+              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] bg-white text-[#2B3674]"
+            >
+              <option value="">Belum dipilih</option>
+              {PABRIK_OPTIONS.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
           </div>
 
           {!isEdit && (
             <div>
               <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">Password</label>
-              <input
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                placeholder="Masukkan password"
-                className="w-full placeholder-[#8789C0] text-[#2B3674] px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399]"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  placeholder="Masukkan password"
+                  className="w-full placeholder-[#8789C0] text-[#2B3674] px-3.5 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399]"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8789C0]"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
           )}
 
