@@ -153,7 +153,7 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">Pe Pabrik</label>
+              <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">PE Pabrik</label>
               <select
                 name="pe_pabrik"
                 value={form.pe_pabrik}
