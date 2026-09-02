@@ -4,7 +4,7 @@ import { kembalikanBarang } from '../api/peminjaman';
 import PeminjamanStatusModal from './PeminjamanStatusModal';
 import CameraCaptureModal from './CameraCaptureModal';
 
-const KONDISI_OPTIONS = ['baik', 'rusak ringan', 'rusak berat', 'hilang'];
+const KONDISI_OPTIONS = ['baik', 'rusak ringan', 'rusak berat'];
 
 const formatTanggal = (dateStr) => {
   if (!dateStr) return '-';
@@ -196,7 +196,7 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
           <label className="block text-sm font-semibold text-[#2B3674] mb-3">
             Kondisi Saat Kembali
           </label>
-          <div className="grid grid-cols-2 gap-3 mb-3">
+          <div className="grid grid-cols-2 gap-3 mb-2">
             {KONDISI_OPTIONS.map((opt) => (
               <button
                 key={opt}
@@ -207,15 +207,15 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
                 {opt.charAt(0).toUpperCase() + opt.slice(1)}
               </button>
             ))}
-          </div>
 
-          <button
-            type="button"
-            onClick={handleSelectLainnya}
-            className={`${kondisiButtonClass(isLainnya)} w-full mb-2`}
-          >
-            Lainnya
-          </button>
+            <button
+              type="button"
+              onClick={handleSelectLainnya}
+              className={kondisiButtonClass(isLainnya)}
+            >
+              Lainnya
+            </button>
+          </div>
 
           {isLainnya && (
             <input

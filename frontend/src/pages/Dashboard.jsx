@@ -22,11 +22,20 @@ const STATUS_STYLE = {
   dikembalikan: 'bg-green-50 text-[#1F9254]',
 };
 
+const KONDISI_OPTIONS = ['baik', 'rusak ringan', 'rusak berat'];
+
 const KONDISI_BAR_COLOR = {
   baik: 'bg-[#1F9254]',
   'rusak ringan': 'bg-[#F79009]',
   'rusak berat': 'bg-[#A30D11]',
-  hilang: 'bg-gray-400',
+};
+
+const kondisiLabel = (kondisi) =>
+  KONDISI_OPTIONS.includes(kondisi?.toLowerCase()) ? kondisi : 'Lainnya';
+
+const kondisiSortIndex = (kondisi) => {
+  const idx = KONDISI_OPTIONS.indexOf(kondisi?.toLowerCase());
+  return idx === -1 ? KONDISI_OPTIONS.length : idx;
 };
 
 const SMOOTH_EASE = [0.16, 1, 0.3, 1];
@@ -409,16 +418,20 @@ export default function Dashboard() {
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <h2 className="font-bold text-[#2B3674] mb-5">Kondisi Barang Keseluruhan</h2>
           <div className="space-y-4">
-            {kondisi_barang.map((item, index) => (
+            {[...kondisi_barang]
+              .sort((a, b) => kondisiSortIndex(a.kondisi) - kondisiSortIndex(b.kondisi))
+              .map((item, index) => (
               <div key={item.kondisi}>
                 <div className="flex items-center justify-between text-sm mb-1.5">
-                  <span className="text-[#2B3674] font-medium capitalize">{item.kondisi}</span>
+                  <span className="text-[#2B3674] font-medium capitalize">
+                    {kondisiLabel(item.kondisi)}
+                  </span>
                   <span className="text-[#8789C0]">
                     {item.jumlah} ({item.persentase}%)
                   </span>
                 </div>
                 <ProgressBar
-                  colorClass={KONDISI_BAR_COLOR[item.kondisi] || 'bg-gray-400'}
+                  colorClass={KONDISI_BAR_COLOR[item.kondisi?.toLowerCase()] || 'bg-gray-400'}
                   percentage={item.persentase}
                   delay={index * 0.1}
                 />
