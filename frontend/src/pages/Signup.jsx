@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api/axios';
 import gambarPupukKaltim from '../assets/gambar-pupukkaltim.jpg';
@@ -24,6 +24,7 @@ export default function Signup() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -154,17 +155,28 @@ export default function Signup() {
 
             <div>
               <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">PE Pabrik</label>
-              <select
-                name="pe_pabrik"
-                value={form.pe_pabrik}
-                onChange={handleChange}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] bg-white"
-              >
-                <option value="">Pilih PE Pabrik</option>
-                {PABRIK_OPTIONS.map((p) => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </select>
+              <div className="relative group">
+                <select
+                  name="pe_pabrik"
+                  value={form.pe_pabrik}
+                  onChange={handleChange}
+                  className={`w-full appearance-none pl-3.5 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] bg-white transition-colors cursor-pointer ${form.pe_pabrik ? 'text-[#2B3674]' : 'text-[#8789C0]'
+                    }`}
+                >
+                  <option value="" disabled hidden>
+                    Pilih PE Pabrik
+                  </option>
+                  {PABRIK_OPTIONS.map((p) => (
+                    <option key={p} value={p} className="text-[#2B3674]">
+                      {p}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  size={18}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none transition-transform duration-200 group-focus-within:rotate-180"
+                />
+              </div>
             </div>
 
             <div>
