@@ -387,26 +387,24 @@ export default function Dashboard() {
             : 'Jumlah pengajuan peminjaman Anda, 12 bulan terakhir'}
         </p>
 
-        <div className="overflow-x-auto -mx-6 px-6 sm:mx-0 sm:px-0">
-          <div className="flex items-end justify-between gap-3 h-48 min-w-160 sm:min-w-0">
-            {tren_peminjaman_bulanan.map((item, index) => (
-              <div
-                key={`${item.bulan}-${item.tahun}-${index}`}
-                className="flex-1 flex flex-col items-center gap-2 h-full justify-end min-w-11"
-              >
-                <span className="text-xs font-semibold text-[#2B3674] whitespace-nowrap">{item.jumlah}</span>
-                <motion.div
-                  initial={{ height: 0 }}
-                  animate={{ height: `${Math.max((item.jumlah / maxTren) * 100, 2)}%` }}
-                  transition={{ duration: 0.9, ease: SMOOTH_EASE, delay: index * 0.04 }}
-                  whileHover={{ scaleY: 1.03 }}
-                  className="w-full max-w-9 bg-[#003399] rounded-md origin-bottom"
-                />
-                <span className="text-xs text-[#8789C0] whitespace-nowrap">{item.bulan}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <div className="flex items-end justify-between gap-1 sm:gap-2 h-48">
+  {tren_peminjaman_bulanan.map((item, index) => (
+    <div
+      key={`${item.bulan}-${item.tahun}-${index}`}
+      className="flex-1 flex flex-col items-center gap-1 sm:gap-2 h-full justify-end"
+    >
+      <span className="text-[10px] sm:text-xs font-semibold text-[#2B3674]">{item.jumlah}</span>
+      <motion.div
+        initial={{ height: 0 }}
+        animate={{ height: `${Math.max((item.jumlah / maxTren) * 100, 2)}%` }}
+        transition={{ duration: 0.9, ease: SMOOTH_EASE, delay: index * 0.04 }}
+        whileHover={{ scaleY: 1.03 }}
+        className="w-full max-w-5 sm:max-w-9 bg-[#003399] rounded-md origin-bottom"
+      />
+      <span className="text-[10px] sm:text-xs text-[#8789C0]">{item.bulan}</span>
+    </div>
+  ))}
+</div>
       </motion.div>
 
       {/* Kondisi Barang & Barang Terpopuler */}
