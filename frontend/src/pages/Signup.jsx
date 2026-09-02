@@ -163,7 +163,7 @@ export default function Signup() {
                   className={`w-full appearance-none pl-3.5 pr-10 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] bg-white transition-colors cursor-pointer ${form.pe_pabrik ? 'text-[#2B3674]' : 'text-[#8789C0]'
                     }`}
                 >
-                  <option value="" disabled hidden>
+                  <option value="">
                     Pilih PE Pabrik
                   </option>
                   {PABRIK_OPTIONS.map((p) => (
