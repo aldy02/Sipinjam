@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Package, ChevronDown, ChevronUp, Calendar, MapPin } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import MainLayout from '../layouts/MainLayout';
 import PageHeader from '../components/PageHeader';
-import KembalikanBarangModal from '../components/KembalikanBarangModal';
 import DetailPeminjamanModal from '../components/DetailPeminjamanModal';
 import { getPeminjamanList } from '../api/peminjaman';
 
@@ -20,20 +19,6 @@ const formatTanggal = (dateStr) => {
     });
 };
 
-const getDueBadge = (rencanaKembali) => {
-    if (!rencanaKembali) return null;
-    const rencana = new Date(rencanaKembali);
-    const today = new Date();
-    rencana.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-    const diffDays = Math.round((rencana - today) / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) {
-        return { label: `Terlambat ${Math.abs(diffDays)} Hari`, className: 'bg-red-50 text-red-600' };
-    }
-    return { label: `Tersisa ${diffDays} Hari`, className: 'bg-orange-50 text-[#CD6200]' };
-};
-
 const HISTORY_PREVIEW_COUNT = 3;
 
 export default function AktivitasSaya() {
@@ -41,7 +26,6 @@ export default function AktivitasSaya() {
     const [loading, setLoading] = useState(true);
     const [showAll, setShowAll] = useState(false);
 
-    const [kembalikanItem, setKembalikanItem] = useState(null);
     const [detailItem, setDetailItem] = useState(null);
 
     const fetchData = useCallback(async () => {
@@ -60,72 +44,12 @@ export default function AktivitasSaya() {
         fetchData();
     }, [fetchData]);
 
-    const activeLoans = items.filter((item) => item.status === 'dipinjam');
     const historyItems = showAll ? items : items.slice(0, HISTORY_PREVIEW_COUNT);
 
     return (
         <MainLayout>
             <PageHeader breadcrumb="Sipinjam / Aktivitas Saya" title="Aktivitas Saya" />
 
-            {/* Section: Barang yang sedang dipinjam */}
-            <div className="mb-6">
-                <h2 className="text-lg font-bold text-[#2B3674] mb-4">Barang Belum Dikembalikan</h2>
-
-                {loading ? (
-                    <div className="bg-white rounded-2xl p-8 text-center text-[#A3AED0] shadow-sm">
-                        Memuat data...
-                    </div>
-                ) : activeLoans.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-8 text-center text-[#A3AED0] shadow-sm flex flex-col items-center gap-2">
-                        <Package size={28} className="text-gray-300" />
-                        Tidak ada barang yang sedang dipinjam
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {activeLoans.map((item) => {
-                            const badge = getDueBadge(item.tanggal_rencana_kembali);
-                            return (
-                                <div key={item.peminjaman_id} className="bg-white rounded-2xl p-6 shadow-sm">
-                                    <div className="flex items-start justify-between mb-2">
-                                        <p className="text-sm font-medium text-[#003399]">{item.kode_peminjaman}</p>
-                                        {badge && (
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${badge.className}`}>
-                                                {badge.label}
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    <h3 className="font-bold text-[#2B3674] text-lg mb-0.5">{item.Equipment?.nama}</h3>
-                                    <p className="text-sm text-[#5B69B9] mb-3">{item.Equipment?.kode_barang}</p>
-
-                                    <p className="flex items-center gap-1.5 text-xs text-[#8789C0] mb-1">
-                                        <Calendar size={14} className="shrink-0" />
-                                        Dipinjam {formatTanggal(item.tanggal_pinjam)} · Rencana kembali{' '}
-                                        {formatTanggal(item.tanggal_rencana_kembali)}
-                                    </p>
-                                    <p className="flex items-center gap-1.5 text-xs text-[#8789C0] mb-4">
-                                        <MapPin size={14} className="shrink-0" />
-                                        {item.lokasi_pemakaian}
-                                    </p>
-
-                                    <button
-                                        onClick={() => setKembalikanItem(item)}
-                                        className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-[#F75807] hover:bg-[#e04e05] text-white text-sm font-semibold transition-colors"
-                                    >
-                                        <Package size={16} />
-                                        Kembalikan
-                                    </button>
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
-
-            {/* Divider */}
-            <div className="md:hidden border-t border-gray-200 my-8" />
-
-            {/* Section: Riwayat Peminjaman Saya */}
             <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">
                 <h2 className="text-lg font-bold text-[#2B3674] mb-5">Riwayat Peminjaman Saya</h2>
 
@@ -232,13 +156,6 @@ export default function AktivitasSaya() {
                     </div>
                 )}
             </div>
-
-            <KembalikanBarangModal
-                isOpen={!!kembalikanItem}
-                data={kembalikanItem}
-                onClose={() => setKembalikanItem(null)}
-                onSuccess={fetchData}
-            />
 
             <DetailPeminjamanModal
                 isOpen={!!detailItem}

@@ -103,10 +103,9 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
   };
 
   const kondisiButtonClass = (isActive) =>
-    `px-4 py-3.5 rounded-xl text-sm font-medium text-left border transition-colors ${
-      isActive
-        ? 'border-[#003399] bg-[#E8EDFB]/70 text-[#2B3674]'
-        : 'border-slate-200 text-[#8789C0] hover:bg-slate-50'
+    `px-4 py-3.5 rounded-xl text-sm font-medium text-left border transition-colors ${isActive
+      ? 'border-[#003399] bg-[#E8EDFB]/70 text-[#2B3674]'
+      : 'border-slate-200 text-[#8789C0] hover:bg-slate-50'
     }`;
 
   // Success (setelah tambah/edit berhasil)

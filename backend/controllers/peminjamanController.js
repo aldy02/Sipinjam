@@ -1,5 +1,7 @@
 const { Peminjaman, Equipment, User } = require('../models');
 const { Op } = require('sequelize');
+const fs = require('fs');
+const path = require('path')
 
 // Generate kode peminjaman format: PJM-YYYYMMDD-XXX
 const generateKodePeminjaman = async () => {
@@ -149,27 +151,37 @@ exports.kembalikanBarang = async (req, res) => {
     const isAdmin = req.user.role === 'admin';
 
     if (!kondisi_saat_kembali) {
+      // Hapus file yang sudah terlanjur di-upload kalau validasi lain gagal
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ message: 'Kondisi saat kembali wajib diisi' });
     }
 
     const peminjaman = await Peminjaman.findByPk(id, { include: [Equipment] });
 
     if (!peminjaman) {
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(404).json({ message: 'Data peminjaman tidak ditemukan' });
     }
 
     if (!isAdmin && peminjaman.user_id !== req.user.user_id) {
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(403).json({ message: 'Anda tidak memiliki akses ke data ini' });
     }
 
     if (peminjaman.status === 'dikembalikan') {
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ message: 'Barang ini sudah dikembalikan sebelumnya' });
     }
+
+    const fotoBuktiKembali = req.file
+      ? `/uploads/bukti-pengembalian/${req.file.filename}`
+      : peminjaman.foto_bukti_kembali;
 
     await peminjaman.update({
       kondisi_saat_kembali,
       lokasi_kembali,
       keterangan: keterangan ?? peminjaman.keterangan,
+      foto_bukti_kembali: fotoBuktiKembali,
       tanggal_aktual_kembali: new Date(),
       status: 'dikembalikan',
     });
@@ -182,6 +194,7 @@ exports.kembalikanBarang = async (req, res) => {
 
     res.json({ message: 'Barang berhasil dikembalikan', data: peminjaman });
   } catch (err) {
+    if (req.file) fs.unlinkSync(req.file.path);
     console.error(err);
     res.status(500).json({ message: 'Terjadi kesalahan server' });
   }

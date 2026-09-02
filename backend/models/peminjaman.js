@@ -36,6 +36,9 @@ const Peminjaman = sequelize.define('Peminjaman', {
   lokasi_kembali: {
     type: DataTypes.STRING(150),
   },
+  foto_bukti_kembali: {
+  type: DataTypes.STRING(255),
+},
   tanggal_pinjam: {
     type: DataTypes.DATE,
     allowNull: false,

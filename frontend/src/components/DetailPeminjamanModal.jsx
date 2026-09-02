@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { getAssetUrl } from '../api/axios';
 
 const formatTanggal = (dateStr) => {
   if (!dateStr) return '-';
@@ -27,6 +28,8 @@ function DetailRow({ label, value, valueClass = '' }) {
 
 export default function DetailPeminjamanModal({ isOpen, onClose, data }) {
   if (!isOpen || !data) return null;
+
+  const fotoUrl = getAssetUrl(data.foto_bukti_kembali);
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
@@ -70,6 +73,19 @@ export default function DetailPeminjamanModal({ isOpen, onClose, data }) {
           <div className="mt-4 bg-gray-50 rounded-xl p-4">
             <p className="text-xs text-[#8789C0] mb-1">Keterangan</p>
             <p className="text-sm text-[#2B3674]">{data.keterangan}</p>
+          </div>
+        )}
+
+        {fotoUrl && (
+          <div className="mt-4">
+            <p className="text-xs text-[#8789C0] mb-2">Foto Bukti Pengembalian</p>
+            <a href={fotoUrl} target="_blank" rel="noopener noreferrer">
+              <img
+                src={fotoUrl}
+                alt="Bukti pengembalian"
+                className="w-full rounded-xl border border-gray-200 object-cover max-h-64 hover:opacity-90 transition-opacity"
+              />
+            </a>
           </div>
         )}
       </div>

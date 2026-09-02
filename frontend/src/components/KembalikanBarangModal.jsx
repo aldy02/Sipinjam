@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { X, MapPin, AlertTriangle } from 'lucide-react';
+import { X, MapPin, AlertTriangle, Camera } from 'lucide-react';
 import { kembalikanBarang } from '../api/peminjaman';
 import PeminjamanStatusModal from './PeminjamanStatusModal';
+import CameraCaptureModal from './CameraCaptureModal';
 
 const KONDISI_OPTIONS = ['baik', 'rusak ringan', 'rusak berat', 'hilang'];
 
@@ -29,9 +30,12 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
   const [isLainnya, setIsLainnya] = useState(false);
   const [kondisiLainnya, setKondisiLainnya] = useState('');
   const [lokasiKembali, setLokasiKembali] = useState('');
+  const [foto, setFoto] = useState(null);
+  const [fotoPreview, setFotoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [statusModal, setStatusModal] = useState(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
 
   useEffect(() => {
     setKondisiKembali('');
@@ -39,7 +43,16 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
     setKondisiLainnya('');
     setLokasiKembali('');
     setError('');
+    if (fotoPreview) URL.revokeObjectURL(fotoPreview);
+    setFoto(null);
+    setFotoPreview(null);
   }, [data, isOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (fotoPreview) URL.revokeObjectURL(fotoPreview);
+    };
+  }, [fotoPreview]);
 
   if (!isOpen || !data) return null;
 
@@ -63,6 +76,26 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
         : 'border-slate-200 text-[#8789C0] hover:bg-slate-50'
     }`;
 
+  const handleCapture = (file) => {
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Ukuran foto maksimal 5MB');
+      setCameraOpen(false);
+      return;
+    }
+
+    setError('');
+    if (fotoPreview) URL.revokeObjectURL(fotoPreview);
+    setFoto(file);
+    setFotoPreview(URL.createObjectURL(file));
+    setCameraOpen(false);
+  };
+
+  const handleRemoveFoto = () => {
+    if (fotoPreview) URL.revokeObjectURL(fotoPreview);
+    setFoto(null);
+    setFotoPreview(null);
+  };
+
   const handleConfirm = async () => {
     setError('');
     const kondisiFinal = isLainnya ? kondisiLainnya.trim() : kondisiKembali;
@@ -77,12 +110,21 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
       return;
     }
 
+    if (!foto) {
+      setError('Foto bukti pengembalian wajib diambil');
+      return;
+    }
+
     try {
       setLoading(true);
-      await kembalikanBarang(data.peminjaman_id, {
-        kondisi_saat_kembali: kondisiFinal,
-        lokasi_kembali: lokasiKembali,
-      });
+
+      const formData = new FormData();
+      formData.append('kondisi_saat_kembali', kondisiFinal);
+      formData.append('lokasi_kembali', lokasiKembali);
+      formData.append('foto_bukti_kembali', foto);
+
+      await kembalikanBarang(data.peminjaman_id, formData);
+
       setStatusModal({
         type: 'success',
         message: (
@@ -180,7 +222,7 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
               type="text"
               value={kondisiLainnya}
               onChange={(e) => setKondisiLainnya(e.target.value)}
-              placeholder="Tulis kondisi barang..."
+              placeholder="Masukkan kondisi barang..."
               className="w-full mb-2 px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399] placeholder-[#8789C0] text-[#2B3674]"
               autoFocus
             />
@@ -200,6 +242,37 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
             />
           </div>
 
+          {/* Foto Bukti Pengembalian — buka live camera preview (getUserMedia) */}
+          <label className="block text-sm font-semibold text-[#2B3674] mb-3">
+            Foto Bukti Pengembalian
+          </label>
+
+          {fotoPreview ? (
+            <div className="relative w-32 h-32 mb-6">
+              <img
+                src={fotoPreview}
+                alt="Preview bukti pengembalian"
+                className="w-full h-full rounded-xl border border-gray-200 object-cover"
+              />
+              <button
+                type="button"
+                onClick={handleRemoveFoto}
+                className="absolute -right-2 -top-2 w-7 h-7 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setCameraOpen(true)}
+              className="w-full flex flex-col items-center justify-center gap-2 py-6 mb-6 rounded-xl border-2 border-dashed border-gray-300 hover:border-[#F75807] text-gray-400 hover:text-[#F75807] transition-colors"
+            >
+              <Camera size={28} />
+              <span className="text-sm font-medium">Ambil Foto</span>
+            </button>
+          )}
+
           <div className="flex gap-3">
             <button
               onClick={onClose}
@@ -217,6 +290,12 @@ export default function KembalikanBarangModal({ isOpen, onClose, onSuccess, data
           </div>
         </div>
       </div>
+
+      <CameraCaptureModal
+        isOpen={cameraOpen}
+        onClose={() => setCameraOpen(false)}
+        onCapture={handleCapture}
+      />
 
       <PeminjamanStatusModal
         isOpen={!!statusModal}

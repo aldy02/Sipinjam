@@ -8,6 +8,7 @@ import {
   Settings,
   LogOut,
   UserCog,
+  PackageCheck,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import logoPupukKaltim from '../assets/Logo.png';
@@ -18,6 +19,7 @@ const getMenuItems = (role) => {
     { label: 'Kelola Akun', icon: <UserCog size={20} />, path: '/kelola-akun', hideFor: ['karyawan'] },
     { label: 'Daftar Barang', icon: <Package size={20} />, path: '/daftar-barang' },
     { label: 'Form Peminjaman Barang', icon: <FileText size={20} />, path: '/form-peminjaman', hideFor: ['admin'] },
+    { label: 'Form Pengembalian Barang', icon: <PackageCheck size={20} />, path: '/form-pengembalian', hideFor: ['admin'] },
     { label: 'Daftar Peminjaman Barang', icon: <ClipboardList size={20} />, path: '/daftar-peminjaman', hideFor: ['karyawan'] },
     { label: 'Aktivitas Saya', icon: <UserCircle size={20} />, path: '/aktivitas-saya', hideFor: ['admin'] },
     { label: 'Pengaturan', icon: <Settings size={20} />, path: '/pengaturan' },

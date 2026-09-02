@@ -13,6 +13,7 @@ import AktivitasSaya from './pages/AktivitasSaya';
 import Pengaturan from './pages/Pengaturan';
 import UnderConstruction from './pages/UnderConstruction';
 import KelolaAkun from './pages/KelolaAkun';
+import FormPengembalianBarang from './pages/FormPengembalianBarang';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -36,6 +37,7 @@ function AnimatedRoutes() {
         <Route element={<ProtectedRoute allowedRoles={['karyawan']} />}>
           <Route path="/form-peminjaman" element={<FormPeminjamanBarang />} />
           <Route path="/aktivitas-saya" element={<AktivitasSaya />} />
+          <Route path="/form-pengembalian" element={<FormPengembalianBarang />} />
         </Route>
 
         {/* Protected routes — khusus admin */}

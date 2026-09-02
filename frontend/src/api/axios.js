@@ -17,4 +17,10 @@ api.interceptors.response.use(
   }
 );
 
+// Helper URL gambar
+export const getAssetUrl = (path) => {
+  if (!path) return null;
+  return path;
+};
+
 export default api;
