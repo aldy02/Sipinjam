@@ -358,9 +358,8 @@ export default function Dashboard() {
                       <td className="py-3 text-[#2B3674]">{formatTanggal(item.tanggal_pinjam)}</td>
                       <td className="py-3">
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                            STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
-                          }`}
+                          className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${STATUS_STYLE[item.status] || 'bg-gray-50 text-gray-500'
+                            }`}
                         >
                           {item.status}
                         </span>
@@ -388,23 +387,25 @@ export default function Dashboard() {
             : 'Jumlah pengajuan peminjaman Anda, 12 bulan terakhir'}
         </p>
 
-        <div className="flex items-end justify-between gap-2 h-48">
-          {tren_peminjaman_bulanan.map((item, index) => (
-            <div
-              key={`${item.bulan}-${item.tahun}-${index}`}
-              className="flex-1 flex flex-col items-center gap-2 h-full justify-end"
-            >
-              <span className="text-xs font-semibold text-[#2B3674]">{item.jumlah}</span>
-              <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: `${Math.max((item.jumlah / maxTren) * 100, 2)}%` }}
-                transition={{ duration: 0.9, ease: SMOOTH_EASE, delay: index * 0.04 }}
-                whileHover={{ scaleY: 1.03 }}
-                className="w-full max-w-9 bg-[#003399] rounded-md origin-bottom"
-              />
-              <span className="text-xs text-[#8789C0]">{item.bulan}</span>
-            </div>
-          ))}
+        <div className="overflow-x-auto -mx-6 px-6 sm:mx-0 sm:px-0">
+          <div className="flex items-end justify-between gap-3 h-48 min-w-160 sm:min-w-0">
+            {tren_peminjaman_bulanan.map((item, index) => (
+              <div
+                key={`${item.bulan}-${item.tahun}-${index}`}
+                className="flex-1 flex flex-col items-center gap-2 h-full justify-end min-w-11"
+              >
+                <span className="text-xs font-semibold text-[#2B3674] whitespace-nowrap">{item.jumlah}</span>
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: `${Math.max((item.jumlah / maxTren) * 100, 2)}%` }}
+                  transition={{ duration: 0.9, ease: SMOOTH_EASE, delay: index * 0.04 }}
+                  whileHover={{ scaleY: 1.03 }}
+                  className="w-full max-w-9 bg-[#003399] rounded-md origin-bottom"
+                />
+                <span className="text-xs text-[#8789C0] whitespace-nowrap">{item.bulan}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </motion.div>
 
@@ -421,22 +422,22 @@ export default function Dashboard() {
             {[...kondisi_barang]
               .sort((a, b) => kondisiSortIndex(a.kondisi) - kondisiSortIndex(b.kondisi))
               .map((item, index) => (
-              <div key={item.kondisi}>
-                <div className="flex items-center justify-between text-sm mb-1.5">
-                  <span className="text-[#2B3674] font-medium capitalize">
-                    {kondisiLabel(item.kondisi)}
-                  </span>
-                  <span className="text-[#8789C0]">
-                    {item.jumlah} ({item.persentase}%)
-                  </span>
+                <div key={item.kondisi}>
+                  <div className="flex items-center justify-between text-sm mb-1.5">
+                    <span className="text-[#2B3674] font-medium capitalize">
+                      {kondisiLabel(item.kondisi)}
+                    </span>
+                    <span className="text-[#8789C0]">
+                      {item.jumlah} ({item.persentase}%)
+                    </span>
+                  </div>
+                  <ProgressBar
+                    colorClass={KONDISI_BAR_COLOR[item.kondisi?.toLowerCase()] || 'bg-gray-400'}
+                    percentage={item.persentase}
+                    delay={index * 0.1}
+                  />
                 </div>
-                <ProgressBar
-                  colorClass={KONDISI_BAR_COLOR[item.kondisi?.toLowerCase()] || 'bg-gray-400'}
-                  percentage={item.persentase}
-                  delay={index * 0.1}
-                />
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 
