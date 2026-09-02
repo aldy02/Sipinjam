@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { X, Trash2, CheckCircle2 } from 'lucide-react';
 import { createEquipment, updateEquipment, deleteEquipment } from '../api/equipment';
 
-const KONDISI_OPTIONS = ['baik', 'rusak ringan', 'rusak berat', 'hilang'];
+const KONDISI_OPTIONS = ['baik', 'rusak ringan', 'rusak berat'];
+const STATUS_OPTIONS = ['tersedia', 'maintenance'];
 
 export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 'form', initialData }) {
   const isEdit = mode === 'edit';
   const isDelete = mode === 'delete';
+  const isBlocked = (isEdit || isDelete) && initialData?.status?.toLowerCase() === 'dipinjam';
 
-  const [form, setForm] = useState({ kode_barang: '', nama: '', kondisi: 'baik', deskripsi: '' });
+  const [form, setForm] = useState({ kode_barang: '', nama: '', kondisi: 'baik', status: 'tersedia', deskripsi: '' });
   const [isLainnya, setIsLainnya] = useState(false);
   const [kondisiLainnya, setKondisiLainnya] = useState('');
   const [error, setError] = useState('');
@@ -19,17 +21,19 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
     if (initialData && (isEdit || isDelete)) {
       const kondisiAwal = initialData.kondisi?.toLowerCase() || 'baik';
       const isCustom = !KONDISI_OPTIONS.includes(kondisiAwal);
+      const statusAwal = initialData.status?.toLowerCase() || 'tersedia';
 
       setForm({
         kode_barang: initialData.kode_barang || '',
         nama: initialData.nama,
         kondisi: isCustom ? '' : kondisiAwal,
+        status: STATUS_OPTIONS.includes(statusAwal) ? statusAwal : 'tersedia',
         deskripsi: initialData.deskripsi || '',
       });
       setIsLainnya(isCustom);
       setKondisiLainnya(isCustom ? initialData.kondisi : '');
     } else {
-      setForm({ kode_barang: '', nama: '', kondisi: 'baik', deskripsi: '' });
+      setForm({ kode_barang: '', nama: '', kondisi: 'baik', status: 'tersedia', deskripsi: '' });
       setIsLainnya(false);
       setKondisiLainnya('');
     }
@@ -48,6 +52,10 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
   const handleSelectLainnya = () => {
     setIsLainnya(true);
     setForm({ ...form, kondisi: '' });
+  };
+
+  const handleSelectStatus = (value) => {
+    setForm({ ...form, status: value });
   };
 
   const handleSubmit = async (e) => {
@@ -72,6 +80,7 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
     }
 
     const payload = { ...form, kondisi: kondisiFinal };
+    if (!isEdit) delete payload.status; // status baru selalu default tersedia di backend
 
     try {
       setLoading(true);
@@ -108,6 +117,12 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
       : 'border-slate-200 text-[#8789C0] hover:bg-slate-50'
     }`;
 
+  const statusButtonClass = (isActive) =>
+    `px-4 py-3.5 rounded-xl text-sm font-medium text-center border transition-colors ${isActive
+      ? 'border-[#003399] bg-[#E8EDFB]/70 text-[#2B3674]'
+      : 'border-slate-200 text-[#8789C0] hover:bg-slate-50'
+    }`;
+
   // Success (setelah tambah/edit berhasil)
   if (successView) {
     return (
@@ -136,6 +151,44 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
             className="w-full py-3.5 rounded-2xl bg-[#027959] hover:bg-green-800 text-white font-semibold text-sm transition-colors"
           >
             OK
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Barang sedang dipinjam -> tidak boleh diedit / dihapus
+  if (isBlocked) {
+    return (
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-3xl w-full max-w-md p-8 relative">
+          <button
+            onClick={onClose}
+            className="absolute right-6 top-6 text-gray-400 hover:text-gray-600"
+          >
+            <X size={22} />
+          </button>
+
+          <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-5">
+            <X size={28} className="text-red-500" />
+          </div>
+
+          <h2 className="text-2xl font-bold text-[#2B3674] mb-2">
+            {isDelete ? 'Tidak Dapat Dihapus' : 'Tidak Dapat Diedit'}
+          </h2>
+          <p className="text-[15px] text-[#8789C0] mb-8 leading-relaxed">
+            Barang{' '}
+            <span className="font-semibold text-[#5B69B9]">
+              {initialData?.kode_barang} - {initialData?.nama}
+            </span>{' '}
+            sedang dipinjam dan tidak dapat {isDelete ? 'dihapus' : 'diubah'} sampai barang dikembalikan.
+          </p>
+
+          <button
+            onClick={onClose}
+            className="w-full py-3.5 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-semibold text-sm transition-colors"
+          >
+            Mengerti
           </button>
         </div>
       </div>
@@ -266,7 +319,7 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
               <button
                 type="button"
                 onClick={handleSelectLainnya}
-                className={`${kondisiButtonClass(isLainnya)} col-span-2`}
+                className={kondisiButtonClass(isLainnya)}
               >
                 Lainnya
               </button>
@@ -277,12 +330,41 @@ export default function EquipmentFormModal({ isOpen, onClose, onSuccess, mode = 
                 type="text"
                 value={kondisiLainnya}
                 onChange={(e) => setKondisiLainnya(e.target.value)}
-                placeholder="Tulis kondisi barang..."
+                placeholder="Masukkan kondisi barang..."
                 className="w-full text-[#2B3674] placeholder-[#8789C0] mt-3 px-3.5 py-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#003399]"
                 autoFocus
               />
             )}
           </div>
+
+          {isEdit && (
+            <div>
+              <label className="block text-sm font-semibold text-[#2B3674] mb-3">
+                Status
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSelectStatus('tersedia')}
+                  className={statusButtonClass(form.status === 'tersedia')}
+                >
+                  Tersedia
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectStatus('maintenance')}
+                  className={statusButtonClass(form.status === 'maintenance')}
+                >
+                  Maintenance
+                </button>
+              </div>
+              {initialData?.status?.toLowerCase() === 'dipinjam' && (
+                <p className="text-xs text-[#8789C0] mt-2">
+                  Barang ini sedang dipinjam. Mengubah status di sini akan menimpa status "Dipinjam".
+                </p>
+              )}
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-semibold text-[#2B3674] mb-1.5">
